@@ -1,0 +1,133 @@
+function extractItemIdFromLink(richText) {
+  if (!richText) return null;
+  var runs = richText.getRuns();
+  for (var i = 0; i < runs.length; i++) {
+    var linkUrl = runs[i].getLinkUrl();
+    if (linkUrl) {
+      var match = linkUrl.match(/\?item=(\d+)/);
+      if (match) {
+        return match[1];
+      }
+    }
+  }
+  return null;
+}
+
+function generateWishlistData() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("WISH LIST");
+  var result = "";
+
+  // Generate player columns dynamically
+  var playerColsStart = 5;  // Starting column (E=5)
+  var playerColsCount = 50; // Number of columns to generate
+  var playerCols = [];
+  for (var i = 0; i < playerColsCount; i++) {
+    playerCols.push(playerColsStart + (i * 2));
+  }
+  var playerRow = 6;
+  var itemStartRow = 9;
+  var itemEndRow = 24; // Adjust based on your data
+
+  playerCols.forEach(function(col) {
+    var playerName = sheet.getRange(playerRow, col).getValue();
+    if (playerName) {
+      var items = [];
+
+      for (var row = itemStartRow; row <= itemEndRow; row++) {
+        var cell = sheet.getRange(row, col);
+        var value = cell.getValue();
+        var bgColor = cell.getBackground();
+
+        // Check if background is green (adjust color code as needed)
+        if (value && bgColor !== '#00ff00') {
+          var itemId = extractItemIdFromLink(cell.getRichTextValue());
+          if (itemId) {
+            items.push(itemId);
+          }
+        }
+      }
+
+      if (items.length > 0) {
+        result += '    ["' + playerName + '"] = {' + items.join(', ') + '},\n';
+      }
+    }
+  });
+
+  return result;
+}
+
+function generateAttributionData() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("WISH LIST");
+  var result = "";
+
+  var col = 5;  // Column E
+  var row = 31; // Start at E31
+
+  while (true) {
+    var itemCell = sheet.getRange(row, col);
+    var itemValue = itemCell.getValue();
+
+    // Stop if we find an empty cell
+    if (!itemValue) {
+      break;
+    }
+
+    // Extract item ID from link
+    var itemId = extractItemIdFromLink(itemCell.getRichTextValue());
+    if (itemId) {
+      var attributions = [];
+
+      // Read up to 5 pairs of (rank, player)
+      for (var i = 0; i < 5; i++) {
+        var rankCell = sheet.getRange(row, col + 1 + (i * 2));
+        var playerCell = sheet.getRange(row, col + 2 + (i * 2));
+
+        var rank = rankCell.getValue();
+        var playerName = playerCell.getValue();
+
+        if (rank && playerName) {
+          attributions.push('      {rank = ' + rank + ', player = "' + playerName + '"}');
+        } else {
+          break;
+        }
+      }
+
+      if (attributions.length > 0) {
+        result += '    [' + itemId + '] = {\n';
+        result += attributions.join(',\n') + '\n';
+        result += '    },\n';
+      }
+    }
+
+    row += 1;
+  }
+
+  return result;
+}
+
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('In Tenebris')
+    .addItem('Generate Addon Data', 'generateLuaData')
+    .addToUi();
+}
+
+function generateLuaData() {
+  var wishlistContent = generateWishlistData();
+  var attributionContent = generateAttributionData();
+
+  var result = "local wishlistData = {\n";
+  result += "  wishlist = {\n";
+  result += wishlistContent;
+  result += "  },\n";
+  result += "  attributions = {\n";
+  result += attributionContent;
+  result += "  },\n";
+  result += "}";
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ADDON");
+  sheet.getRange("A1").setValue(result);
+}
+
+function onEdit(e) {
+  generateLuaData();
+}
