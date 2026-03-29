@@ -1,6 +1,6 @@
 ## Interface: 11200
 ## Title: In Tenebris
-## Notes: Displays wishlist and obtained items information in tooltips
+## Notes: Displays wishlist information in tooltips
 ## Author: Ilithyia
 ## Version: 1.0.0
 ## SavedVariables:

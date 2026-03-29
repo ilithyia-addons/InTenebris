@@ -1,6 +1,6 @@
-# StyLua configuration for Necrosis WoW addon
+# StyLua configuration for InTenebris WoW addon
 # Target: Lua 5.0 (WoW 1.12 client compatibility)
 
 syntax = "Lua51"
 column_width = 120
-line_endings = "Windows"
+line_endings = "Unix"

@@ -9,9 +9,9 @@ InTenebris is a World of Warcraft 1.12 (Vanilla) addon for the TurtleWoW private
 ## Development Environment
 
 - **Lua target**: Lua 5.0 semantics (WoW 1.12 client) — no `#` length operator, use `table.getn()`; no vararg `...` syntax in some contexts; `pairs`/`ipairs` only
-- **Formatter**: StyLua 2.3 (`stylua .` to format; config in `.stylua.toml`, Libs/ excluded via `.styluaignore`)
+- **Formatter**: StyLua 2.3 (`stylua .` to format; config in `.stylua.toml`, Libs/ excluded via `.styluaignore`). Always run `stylua .` after making changes to Lua files.
 - **Tool versions**: managed via `mise.toml`
-- **Line endings**: CRLF (Windows)
+- **Line endings**: LF
 - **Indentation**: 4 spaces
 
 ## Architecture
