@@ -11,3 +11,4 @@ Libs\AceAddon-2.0\AceAddon-2.0.lua
 Libs\AceEvent-2.0\AceEvent-2.0.lua
 
 InTenebris.lua
+WishlistData.lua
