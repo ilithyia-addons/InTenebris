@@ -462,7 +462,6 @@ local function AcquireItemButton(itemID, fontObject)
 	local btn = lootItemButtonPool[lootItemButtonPoolUsed]
 	btn.itemID = itemID
 	btn.label:SetFontObject(fontObject or GameFontNormal)
-	btn:SetWidth(LOOT_CONTENT_WIDTH)
 	btn:Show()
 	return btn
 end
@@ -530,6 +529,7 @@ RenderLootAttributions = function()
 				local header = AcquireItemButton(item.itemID, GameFontNormal)
 				header:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 0, -yOffset)
 				header.label:SetText(item.info.colored)
+				header:SetWidth(header.label:GetStringWidth() + 4)
 				yOffset = yOffset + 16
 
 				-- Attribution entries
@@ -604,6 +604,7 @@ RenderLootAttributions = function()
 					local entry = AcquireItemButton(item.itemID, GameFontNormalSmall)
 					entry:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 16, -yOffset)
 					entry.label:SetText("Rank " .. item.rank .. ": " .. info.colored)
+					entry:SetWidth(entry.label:GetStringWidth() + 4)
 					yOffset = yOffset + 14
 				end
 
