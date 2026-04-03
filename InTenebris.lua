@@ -218,30 +218,39 @@ local function ExtractItemID(link)
 	return tonumber(id)
 end
 
--- Secondary tooltip for displaying InTenebris data
-local secondaryTooltip = CreateFrame("GameTooltip", "InTenebrisTooltip", UIParent, "GameTooltipTemplate")
-secondaryTooltip:SetFrameStrata("TOOLTIP")
+-- Secondary tooltips for displaying InTenebris data (one per parent tooltip)
+local secondaryTooltips = {}
 
--- Apply pfUI skin if available
-if pfUI and pfUI.api and pfUI.api.CreateBackdrop then
-	pfUI.api.CreateBackdrop(secondaryTooltip)
-	if pfUI.api.CreateBackdropShadow then
-		pfUI.api.CreateBackdropShadow(secondaryTooltip)
+local function SkinTooltipWithPfUI(tooltip)
+	if pfUI and pfUI.api and pfUI.api.CreateBackdrop then
+		pfUI.api.CreateBackdrop(tooltip)
+		if pfUI.api.CreateBackdropShadow then
+			pfUI.api.CreateBackdropShadow(tooltip)
+		end
 	end
 end
 
--- Hide secondary tooltip when parent tooltip hides
-local function HookParentTooltipHide(parentTooltip)
-	if not parentTooltip.InTenebrisHideHooked then
+local function GetSecondaryTooltip(parentTooltip)
+	local parentName = parentTooltip:GetName()
+	if not secondaryTooltips[parentName] then
+		local tooltipName = "InTenebris" .. parentName
+		local tooltip = CreateFrame("GameTooltip", tooltipName, UIParent, "GameTooltipTemplate")
+		tooltip:SetFrameStrata(parentTooltip:GetFrameStrata())
+		tooltip:SetFrameLevel(parentTooltip:GetFrameLevel())
+		SkinTooltipWithPfUI(tooltip)
+
+		-- Hide secondary tooltip when parent hides
 		local originalOnHide = parentTooltip:GetScript("OnHide")
 		parentTooltip:SetScript("OnHide", function()
-			secondaryTooltip:Hide()
+			tooltip:Hide()
 			if originalOnHide then
 				originalOnHide()
 			end
 		end)
-		parentTooltip.InTenebrisHideHooked = true
+
+		secondaryTooltips[parentName] = tooltip
 	end
+	return secondaryTooltips[parentName]
 end
 
 local function AddInTenebrisDataToTooltip(parentFrame, itemID)
@@ -262,6 +271,7 @@ local function AddInTenebrisDataToTooltip(parentFrame, itemID)
 	end
 
 	-- Set up secondary tooltip anchored to the parent
+	local secondaryTooltip = GetSecondaryTooltip(parentFrame)
 	secondaryTooltip:SetOwner(parentFrame, "ANCHOR_NONE")
 	secondaryTooltip:SetPoint("TOPLEFT", parentFrame, "TOPRIGHT", 4, 0)
 	secondaryTooltip:AddLine("|cffffd94dIn Tenebris|r")
@@ -328,7 +338,6 @@ local function AddInTenebrisDataToTooltip(parentFrame, itemID)
 	end
 
 	secondaryTooltip:Show()
-	HookParentTooltipHide(parentFrame)
 end
 
 local gameTooltipHooks = {}
@@ -340,7 +349,7 @@ function InTenebris:HookTooltips()
 		InTenebris:SecureHook(GameTooltip, name, f)
 	end
 
-	InTenebris:SecureHook("SetItemRef", function(itemLink)
+	InTenebris:SecureHook(ItemRefTooltip, "SetHyperlink", function(self, itemLink)
 		local itemID = ExtractItemID(itemLink)
 		if itemID then
 			AddInTenebrisDataToTooltip(ItemRefTooltip, itemID)
