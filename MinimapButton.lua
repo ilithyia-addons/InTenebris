@@ -18,7 +18,7 @@ button:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight"
 local icon = button:CreateTexture(nil, "BACKGROUND")
 icon:SetWidth(20)
 icon:SetHeight(20)
-icon:SetPoint("TOPLEFT", button, "TOPLEFT", 7, -5)
+icon:SetPoint("CENTER", button, "CENTER", 0, 1)
 
 -- Try custom texture, fall back to built-in icon
 local customTexturePath = "Interface\\AddOns\\InTenebris\\Textures\\MinimapIcon"
