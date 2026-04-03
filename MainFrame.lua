@@ -116,6 +116,12 @@ local contentHeaderText = contentArea:CreateFontString(nil, "OVERLAY", "GameFont
 contentHeaderText:SetPoint("TOPLEFT", contentArea, "TOPLEFT", 14, -12)
 contentHeaderText:SetTextColor(1.0, 0.85, 0.30, 1)
 
+-- Content header subtitle (right-aligned, for contextual info like dates)
+local contentHeaderSubtitle = contentArea:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+contentHeaderSubtitle:SetPoint("RIGHT", contentArea, "RIGHT", -14, 0)
+contentHeaderSubtitle:SetPoint("TOP", contentArea, "TOP", 0, -15)
+contentHeaderSubtitle:SetTextColor(0.6, 0.6, 0.6, 1)
+
 -- Content header separator
 local contentHeaderSep = contentArea:CreateTexture(nil, "ARTWORK")
 contentHeaderSep:SetHeight(1)
@@ -160,6 +166,12 @@ local function UpdateTabAppearance()
 			tab.indicator:Show()
 			tab.content:Show()
 			contentHeaderText:SetText(tab.headerText)
+			if tab.subtitle then
+				contentHeaderSubtitle:SetText(tab.subtitle)
+				contentHeaderSubtitle:Show()
+			else
+				contentHeaderSubtitle:Hide()
+			end
 		else
 			-- Inactive tab
 			tab.bg:SetTexture(0, 0, 0, 0)
@@ -596,6 +608,12 @@ local originalLootOnShow = lootTab:GetScript("OnShow")
 lootTab:SetScript("OnShow", function()
 	if originalLootOnShow then
 		originalLootOnShow()
+	end
+	-- Update subtitle with generation date
+	if InTenebris.wishlistData and InTenebris.wishlistData.generatedDate then
+		tabs["loot"].subtitle = "Data from " .. InTenebris.wishlistData.generatedDate
+		contentHeaderSubtitle:SetText(tabs["loot"].subtitle)
+		contentHeaderSubtitle:Show()
 	end
 	RenderLootAttributions()
 end)

@@ -115,7 +115,10 @@ function generateLuaData() {
   var wishlistContent = generateWishlistData();
   var attributionContent = generateAttributionData();
 
+  var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
+
   var result = "local wishlistData = {\n";
+  result += '  generatedDate = "' + today + '",\n';
   result += "  wishlist = {\n";
   result += wishlistContent;
   result += "  },\n";
