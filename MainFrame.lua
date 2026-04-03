@@ -452,11 +452,6 @@ local function AcquireItemButton(itemID, fontObject)
 		btn:SetScript("OnLeave", function()
 			GameTooltip:Hide()
 		end)
-		btn:SetScript("OnClick", function()
-			if this.itemID then
-				SetItemRef("item:" .. this.itemID .. ":0:0:0")
-			end
-		end)
 		lootItemButtonPool[lootItemButtonPoolUsed] = btn
 	end
 	local btn = lootItemButtonPool[lootItemButtonPoolUsed]
