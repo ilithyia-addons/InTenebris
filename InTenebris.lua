@@ -222,6 +222,14 @@ end
 local secondaryTooltip = CreateFrame("GameTooltip", "InTenebrisTooltip", UIParent, "GameTooltipTemplate")
 secondaryTooltip:SetFrameStrata("TOOLTIP")
 
+-- Apply pfUI skin if available
+if pfUI and pfUI.api and pfUI.api.CreateBackdrop then
+	pfUI.api.CreateBackdrop(secondaryTooltip)
+	if pfUI.api.CreateBackdropShadow then
+		pfUI.api.CreateBackdropShadow(secondaryTooltip)
+	end
+end
+
 -- Hide secondary tooltip when parent tooltip hides
 local function HookParentTooltipHide(parentTooltip)
 	if not parentTooltip.InTenebrisHideHooked then
