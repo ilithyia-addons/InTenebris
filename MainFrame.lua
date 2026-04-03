@@ -270,8 +270,81 @@ local craftingPlaceholder = craftingTab:CreateFontString(nil, "OVERLAY", "GameFo
 craftingPlaceholder:SetPoint("CENTER", craftingTab, "CENTER", 0, 0)
 craftingPlaceholder:SetText("|cff666666Coming soon.|r")
 
--- Options tab (placeholder)
+-- Options tab
 local optionsTab = InTenebris:RegisterTab("options", "Options", 4)
-local optionsPlaceholder = optionsTab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-optionsPlaceholder:SetPoint("CENTER", optionsTab, "CENTER", 0, 0)
-optionsPlaceholder:SetText("|cff666666No options available yet.|r")
+
+-- Scroll frame for options content
+local optionsScroll = CreateFrame("ScrollFrame", "InTenebrisOptionsScroll", optionsTab, "UIPanelScrollFrameTemplate")
+optionsScroll:SetPoint("TOPLEFT", optionsTab, "TOPLEFT", 0, 0)
+optionsScroll:SetPoint("BOTTOMRIGHT", optionsTab, "BOTTOMRIGHT", -26, 0)
+
+-- Scroll child (all options go here)
+local optionsContent = CreateFrame("Frame", nil, optionsScroll)
+optionsContent:SetWidth(optionsScroll:GetWidth() or 350)
+optionsContent:SetHeight(600)
+optionsScroll:SetScrollChild(optionsContent)
+
+-- ============================================================
+-- Options: Item Tooltip section
+-- ============================================================
+
+-- Section header
+local tooltipSectionHeader = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+tooltipSectionHeader:SetPoint("TOPLEFT", optionsContent, "TOPLEFT", 4, -4)
+tooltipSectionHeader:SetText("Item Tooltip")
+tooltipSectionHeader:SetTextColor(1.0, 0.85, 0.30, 1)
+
+-- Section separator
+local tooltipSectionSep = optionsContent:CreateTexture(nil, "ARTWORK")
+tooltipSectionSep:SetHeight(1)
+tooltipSectionSep:SetPoint("TOPLEFT", tooltipSectionHeader, "BOTTOMLEFT", 0, -4)
+tooltipSectionSep:SetPoint("RIGHT", optionsContent, "RIGHT", -4, 0)
+tooltipSectionSep:SetTexture(0.6, 0.5, 0.15, 0.4)
+
+-- "Show loot attributions:" label
+local showAttribLabel = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+showAttribLabel:SetPoint("TOPLEFT", tooltipSectionSep, "BOTTOMLEFT", 0, -12)
+showAttribLabel:SetText("Show loot attributions:")
+
+-- Dropdown for attribution display mode
+local dropdownName = "InTenebrisShowAttributionsDropdown"
+local dropdown = CreateFrame("Frame", dropdownName, optionsContent, "UIDropDownMenuTemplate")
+dropdown:SetPoint("LEFT", showAttribLabel, "RIGHT", -8, -2)
+
+local ATTRIB_OPTIONS = {
+	{ text = "When in a party or raid", value = "group" },
+	{ text = "Always", value = "always" },
+}
+
+local function ShowAttributionsDropdown_Initialize()
+	for _, option in ipairs(ATTRIB_OPTIONS) do
+		local info = {}
+		info.text = option.text
+		info.value = option.value
+		info.func = function()
+			InTenebris.db.profile.showAttributions = option.value
+			UIDropDownMenu_SetSelectedValue(dropdown, option.value)
+		end
+		info.checked = nil
+		UIDropDownMenu_AddButton(info)
+	end
+end
+
+UIDropDownMenu_Initialize(dropdown, ShowAttributionsDropdown_Initialize)
+UIDropDownMenu_SetWidth(180, dropdown)
+
+-- Set initial value from saved profile on show
+local originalOnShow = optionsTab:GetScript("OnShow")
+optionsTab:SetScript("OnShow", function()
+	if originalOnShow then
+		originalOnShow()
+	end
+	local currentValue = InTenebris.db.profile.showAttributions
+	UIDropDownMenu_SetSelectedValue(dropdown, currentValue)
+	for _, option in ipairs(ATTRIB_OPTIONS) do
+		if option.value == currentValue then
+			UIDropDownMenu_SetText(option.text, dropdown)
+			break
+		end
+	end
+end)

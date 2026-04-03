@@ -5,6 +5,9 @@ InTenebris:RegisterDB("InTenebrisDB", "InTenebrisCharDB")
 InTenebris:RegisterDefaults("char", {
 	minimapAngle = 220,
 })
+InTenebris:RegisterDefaults("profile", {
+	showAttributions = "group", -- "group" = when in party/raid, "always" = always
+})
 
 -- Class colors for tooltip display
 local CLASS_COLORS = {
@@ -235,8 +238,9 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 			end
 		end
 
-		-- Show attributions (raid members only, unless ALT is pressed)
-		local attributionsToShow = shiftKeyPressed and allAttributions or raidAttributions
+		-- Show attributions: always if option set or Shift held, otherwise raid members only
+		local alwaysShow = InTenebris.db.profile.showAttributions == "always"
+		local attributionsToShow = (alwaysShow or shiftKeyPressed) and allAttributions or raidAttributions
 		if table.getn(attributionsToShow) > 0 then
 			if headerAdded == false then
 				AddHeaderToTooltip(frame)
@@ -269,8 +273,9 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 			end
 		end
 
-		-- Show wishlisted by (raid members only, unless SHIFT is pressed)
-		local wishlisters = shiftKeyPressed and allWishlisters or raidWishlisters
+		-- Show wishlisted by: always if option set or Shift held, otherwise raid members only
+		local alwaysShow = InTenebris.db.profile.showAttributions == "always"
+		local wishlisters = (alwaysShow or shiftKeyPressed) and allWishlisters or raidWishlisters
 		if table.getn(wishlisters) > 0 then
 			if headerAdded == false then
 				AddHeaderToTooltip(frame)
