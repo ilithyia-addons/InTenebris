@@ -126,7 +126,7 @@ function generateLuaData() {
 
   var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
 
-  var result = "local wishlistData = {\n";
+  var result = "InTenebris.wishlistData = {\n";
   result += '  generatedDate = "' + today + '",\n';
   result += "  wishlist = {\n";
   result += wishlistContent;
