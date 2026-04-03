@@ -210,12 +210,6 @@ function InTenebris:GetClassColorCode(class)
 	return CLASS_COLOR_CODES[class] or "|cff999999"
 end
 
-local function AddHeaderToTooltip(frame)
-	-- Add header
-	frame:AddLine(" ")
-	frame:AddLine("|cffffd94dIn Tenebris|r")
-end
-
 local function ExtractItemID(link)
 	if not link then
 		return nil
@@ -224,7 +218,25 @@ local function ExtractItemID(link)
 	return tonumber(id)
 end
 
-local function AddInTenebrisDataToTooltip(frame, itemID)
+-- Secondary tooltip for displaying InTenebris data
+local secondaryTooltip = CreateFrame("GameTooltip", "InTenebrisTooltip", UIParent, "GameTooltipTemplate")
+secondaryTooltip:SetFrameStrata("TOOLTIP")
+
+-- Hide secondary tooltip when parent tooltip hides
+local function HookParentTooltipHide(parentTooltip)
+	if not parentTooltip.InTenebrisHideHooked then
+		local originalOnHide = parentTooltip:GetScript("OnHide")
+		parentTooltip:SetScript("OnHide", function()
+			secondaryTooltip:Hide()
+			if originalOnHide then
+				originalOnHide()
+			end
+		end)
+		parentTooltip.InTenebrisHideHooked = true
+	end
+end
+
+local function AddInTenebrisDataToTooltip(parentFrame, itemID)
 	local wishlistPlayersLower = wishlistLookup[itemID]
 	local itemAttributions = attributionLookup[itemID]
 	local shiftKeyPressed = IsShiftKeyDown()
@@ -232,9 +244,8 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 	local inGroup = GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0
 	local showOutOfGroup = InTenebris.db.profile.showOutOfGroup == "yes"
 	local showAllPlayers = alwaysShow or shiftKeyPressed or (inGroup and showOutOfGroup)
-	local headerAdded = false
 
-	-- If no data, don't add anything
+	-- If no data, don't show anything
 	if
 		(not wishlistPlayersLower or table.getn(wishlistPlayersLower) == 0)
 		and (not itemAttributions or table.getn(itemAttributions) == 0)
@@ -242,12 +253,16 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 		return
 	end
 
+	-- Set up secondary tooltip anchored to the parent
+	secondaryTooltip:SetOwner(parentFrame, "ANCHOR_NONE")
+	secondaryTooltip:SetPoint("TOPLEFT", parentFrame, "TOPRIGHT", 0, 0)
+	secondaryTooltip:AddLine("|cffffd94dIn Tenebris|r")
+
 	-- Add attribution info
 	if itemAttributions and table.getn(itemAttributions) > 0 then
 		local raidAttributions = {}
 		local allAttributions = {}
 
-		-- Process attributions
 		for _, attribution in ipairs(itemAttributions) do
 			local isInRaid = InTenebris:IsPlayerInRaid(attribution.playerLower)
 			local class = InTenebris:GetPlayerClass(attribution.playerLower)
@@ -264,15 +279,10 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 
 		local attributionsToShow = showAllPlayers and allAttributions or raidAttributions
 		if table.getn(attributionsToShow) > 0 then
-			if headerAdded == false then
-				AddHeaderToTooltip(frame)
-				headerAdded = true
-			end
-			frame:AddLine("|cffffd94dAttributions:|r")
-
+			secondaryTooltip:AddLine("|cffffd94dAttributions:|r")
 			for _, data in ipairs(attributionsToShow) do
 				local colorCode = InTenebris:GetClassColorCode(data.class)
-				frame:AddLine("  " .. data.rank .. ". " .. colorCode .. data.name .. "|r")
+				secondaryTooltip:AddLine("  " .. data.rank .. ". " .. colorCode .. data.name .. "|r")
 			end
 		end
 	end
@@ -297,11 +307,6 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 
 		local wishlisters = showAllPlayers and allWishlisters or raidWishlisters
 		if table.getn(wishlisters) > 0 then
-			if headerAdded == false then
-				AddHeaderToTooltip(frame)
-				headerAdded = true
-			end
-
 			local wishlistLine = "|cffffd94dWishlisted by: |r"
 			for i, data in ipairs(wishlisters) do
 				local colorCode = InTenebris:GetClassColorCode(data.class)
@@ -310,12 +315,12 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 					wishlistLine = wishlistLine .. ", "
 				end
 			end
-
-			frame:AddLine(wishlistLine)
+			secondaryTooltip:AddLine(wishlistLine)
 		end
 	end
 
-	frame:Show()
+	secondaryTooltip:Show()
+	HookParentTooltipHide(parentFrame)
 end
 
 local gameTooltipHooks = {}
