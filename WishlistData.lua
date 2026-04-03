@@ -16,580 +16,673 @@
 
 -- WISHLIST_DATA_START
 InTenebris.wishlistData = {
-  generatedDate = "2026-04-03",
-  wishlist = {
-    ["MWC"] = {17204, 17104},
-    ["CYNDA"] = {18820, 18842, 16900},
-    ["MIQUETANERE"] = {19140, 18875, 16900, 16831, 18814},
-    ["YAKHAI"] = {17063},
-    ["COVAS"] = {18810, 19140, 18814},
-    ["DEASP"] = {19140},
-    ["CAILLOU"] = {19140, 16853},
-    ["NONOEIL"] = {17063},
-    ["MCKEE"] = {19361, 19377, 16942, 16937},
-    ["SOUFFRANCE"] = {18820, 58205, 16922},
-  },
-  attributions = {
-    [19336] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19337] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19369] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19370] = {
-      {rank = 1, player = "SOUFFRANCE"}
-    },
-    [16904] = {
-      {rank = 1, player = "MIQUETAMERE"}
-    },
-    [16911] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16918] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16926] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16934] = {
-      {rank = 1, player = "CERNED"}
-    },
-    [16935] = {
-      {rank = 1, player = "MCKEE"}
-    },
-    [16943] = {
-      {rank = 1, player = "POKPOK"},
-      {rank = 2, player = "MUNDUK"}
-    },
-    [16951] = {
-      {rank = 1, player = "DEASP"},
-      {rank = 2, player = "KALEN"}
-    },
-    [16959] = {
-      {rank = 1, player = "BULDOZER"},
-      {rank = 2, player = "JENAIMARRE"},
-      {rank = 3, player = "KROKADIN"}
-    },
-    [19334] = {
-      {rank = 1, player = "DOUWI"},
-      {rank = 2, player = "BULDOZER"},
-      {rank = 3, player = "MWC"}
-    },
-    [19335] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19339] = {
-      {rank = 1, player = "SALOPIOT"}
-    },
-    [19340] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19371] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19372] = {
-      {rank = 1, player = "BULDOZER"},
-      {rank = 2, player = "NAHEULL"},
-      {rank = 3, player = "JENAIMARRE"}
-    },
-    [16818] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16903] = {
-      {rank = 1, player = "SHARIVARY"}
-    },
-    [16910] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16925] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16933] = {
-      {rank = 1, player = "CERNED"}
-    },
-    [16936] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16944] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16952] = {
-      {rank = 1, player = "KARANIR"},
-      {rank = 2, player = "KALEN"},
-      {rank = 3, player = "DOUWI"}
-    },
-    [16960] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19348] = {
-      {rank = 1, player = "CAILLOU"}
-    },
-    [19341] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19342] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19373] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19374] = {
-      {rank = 1, player = "SELVIA"},
-      {rank = 2, player = "HEYLARI"},
-      {rank = 3, player = "LEHOOF"}
-    },
-    [16898] = {
-      {rank = 1, player = "MIQUETAMERE"}
-    },
-    [16906] = {
-      {rank = 1, player = "WORLDE"}
-    },
-    [16912] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16919] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16927] = {
-      {rank = 1, player = "CERNED"}
-    },
-    [16941] = {
-      {rank = 1, player = "MCKEE"}
-    },
-    [16949] = {
-      {rank = 1, player = "LEHOOF"},
-      {rank = 2, player = "PEDRO"},
-      {rank = 3, player = "RAGEUX"}
-    },
-    [16957] = {
-      {rank = 1, player = "KALEN"}
-    },
-    [16965] = {
-      {rank = 1, player = "HODVIDAR"},
-      {rank = 2, player = "DARNOM"},
-      {rank = 3, player = "MWC"}
-    },
-    [19350] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19351] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19343] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19344] = {
-      {rank = 1, player = "LEHOOF"}
-    },
-    [19365] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19398] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19399] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19400] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19401] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19402] = {
-      {rank = 1, player = "BULDOZER"},
-      {rank = 2, player = "DARNOM"}
-    },
-    [16899] = {
-      {rank = 1, player = "SHARIVARY"}
-    },
-    [16907] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16913] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16920] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16940] = {
-      {rank = 1, player = "MCKEE"}
-    },
-    [16948] = {
-      {rank = 1, player = "POKPOK"},
-      {rank = 2, player = "PEDRO"},
-      {rank = 3, player = "MUNDUK"}
-    },
-    [16956] = {
-      {rank = 1, player = "KARANIR"}
-    },
-    [16964] = {
-      {rank = 1, player = "HODVIDAR"},
-      {rank = 2, player = "MWC"},
-      {rank = 3, player = "JENAIMARRE"}
-    },
-    [19353] = {
-      {rank = 1, player = "SHREK"},
-      {rank = 2, player = "HODVIDAR"}
-    },
-    [19355] = {
-      {rank = 1, player = "SALOPIOT"}
-    },
-    [19394] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19395] = {
-      {rank = 1, player = "CAILLOU"},
-      {rank = 2, player = "DEASP"},
-      {rank = 3, player = "TERREN"}
-    },
-    [19396] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19397] = {
-      {rank = 1, player = "POKPOK"}
-    },
-    [19345] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19368] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19403] = {
-      {rank = 1, player = "SEVILIA"},
-      {rank = 2, player = "HEYLARI"},
-      {rank = 3, player = "SOUFFRANCE"}
-    },
-    [19405] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19406] = {
-      {rank = 1, player = "NAHEULL"},
-      {rank = 2, player = "HODVIDAR"}
-    },
-    [19407] = {
-      {rank = 1, player = "CERNED"}
-    },
-    [16899] = {
-      {rank = 1, player = "SHARIVARY"}
-    },
-    [16907] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16913] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16920] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16928] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16940] = {
-      {rank = 1, player = "MCKEE"}
-    },
-    [16948] = {
-      {rank = 1, player = "POKPOK"},
-      {rank = 2, player = "PEDRO"},
-      {rank = 3, player = "MUNDUK"}
-    },
-    [16956] = {
-      {rank = 1, player = "KARANIR"}
-    },
-    [16964] = {
-      {rank = 1, player = "HODVIDAR"},
-      {rank = 2, player = "MWC"},
-      {rank = 3, player = "JENAIMARRE"}
-    },
-    [19353] = {
-      {rank = 1, player = "SHREK"},
-      {rank = 2, player = "HODVIDAR"}
-    },
-    [19355] = {
-      {rank = 1, player = "SALOPIOT"}
-    },
-    [19394] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19395] = {
-      {rank = 1, player = "CAILLOU"},
-      {rank = 2, player = "DEASP"},
-      {rank = 3, player = "TERREN"}
-    },
-    [19396] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19397] = {
-      {rank = 1, player = "POKPOK"}
-    },
-    [19357] = {
-      {rank = 1, player = "ELENELOR"}
-    },
-    [19367] = {
-      {rank = 1, player = "SEVILIA"},
-      {rank = 2, player = "SALOPIOT"}
-    },
-    [19430] = {
-      {rank = 1, player = "POKPOK"}
-    },
-    [19431] = {
-      {rank = 1, player = "DARNOM"}
-    },
-    [19432] = {
-      {rank = 1, player = "JEANAIMARRE"},
-      {rank = 2, player = "ELENELOR"}
-    },
-    [19433] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16899] = {
-      {rank = 1, player = "SHARIVARY"}
-    },
-    [16907] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16913] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16920] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16928] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16940] = {
-      {rank = 1, player = "MCKEE"}
-    },
-    [16948] = {
-      {rank = 1, player = "POKPOK"},
-      {rank = 2, player = "PEDRO"},
-      {rank = 3, player = "MUNDUK"}
-    },
-    [16956] = {
-      {rank = 1, player = "KARANIR"}
-    },
-    [16964] = {
-      {rank = 1, player = "HODVIDAR"},
-      {rank = 2, player = "MWC"},
-      {rank = 3, player = "JENAIMARRE"}
-    },
-    [19353] = {
-      {rank = 1, player = "SHREK"},
-      {rank = 2, player = "HODVIDAR"}
-    },
-    [19355] = {
-      {rank = 1, player = "SALOPIOT"}
-    },
-    [19394] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19395] = {
-      {rank = 1, player = "CAILLOU"},
-      {rank = 2, player = "DEASP"},
-      {rank = 3, player = "TERREN"}
-    },
-    [19396] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19397] = {
-      {rank = 1, player = "POKPOK"}
-    },
-    [19385] = {
-      {rank = 1, player = "DEASP"},
-      {rank = 2, player = "CAILLOU"},
-      {rank = 3, player = "MUNDUK"}
-    },
-    [19387] = {
-      {rank = 1, player = "KROKADIN"}
-    },
-    [19388] = {
-      {rank = 1, player = "SOUFFRANCE"}
-    },
-    [19389] = {
-      {rank = 1, player = "RAGEUX"}
-    },
-    [19386] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19390] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19391] = {
-      {rank = 1, player = "BOSEIJU"}
-    },
-    [19392] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19393] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16832] = {
-      {rank = 1, player = "WORLDE"}
-    },
-    [16902] = {
-      {rank = 1, player = "SHARIVARY"}
-    },
-    [16917] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16924] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16932] = {
-      {rank = 1, player = "CERNED"}
-    },
-    [16937] = {
-      {rank = 1, player = "MCKEE"},
-      {rank = 2, player = "SHREK"}
-    },
-    [16945] = {
-      {rank = 1, player = "RAGEUX"}
-    },
-    [16953] = {
-      {rank = 1, player = "DOUWI"},
-      {rank = 2, player = "KALEN"},
-      {rank = 3, player = "DEASP"}
-    },
-    [16961] = {
-      {rank = 1, player = "MWC"},
-      {rank = 2, player = "JEANAIMARRE"},
-      {rank = 3, player = "DARNOM"}
-    },
-    [19349] = {
-      {rank = 1, player = "DARNOM"}
-    },
-    [19352] = {
-      {rank = 1, player = "DAZZA"},
-      {rank = 2, player = "WORLDE"}
-    },
-    [19347] = {
-      {rank = 1, player = "CERNED"}
-    },
-    [19361] = {
-      {rank = 1, player = "MCKEE"}
-    },
-    [19002] = {
-      {rank = 1, player = "KROKADIN"}
-    },
-    [19003] = {
-      {rank = 1, player = "DARNOM"}
-    },
-    [19375] = {
-      {rank = 1, player = "SOUFFRANCE"},
-      {rank = 2, player = "HEYLARI"}
-    },
-    [19376] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19377] = {
-      {rank = 1, player = "MCKEE"},
-      {rank = 2, player = "DAZZA"}
-    },
-    [19378] = {
-      {rank = 1, player = "SEVILIA"}
-    },
-    [19379] = {
-      {rank = 1, player = "SOUFFRANCE"},
-      {rank = 2, player = "LEHOOF"}
-    },
-    [19380] = {
-      {rank = 1, player = "PEDRO"},
-      {rank = 2, player = "RAGEUX"},
-      {rank = 3, player = "SHREK"}
-    },
-    [19381] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19382] = {
-      {rank = 1, player = "DEASP"},
-      {rank = 2, player = "POKPOK"},
-      {rank = 3, player = "MUNDUK"}
-    },
-    [16897] = {
-      {rank = 1, player = "SHARIVARY"},
-      {rank = 2, player = "MIQUETAMERE"}
-    },
-    [16905] = {
-      {rank = 1, player = "WORLDE"},
-      {rank = 2, player = "DAZZA"}
-    },
-    [16916] = {
-      {rank = 1, player = "RAND"}
-    },
-    [16923] = {
-      {rank = 1, player = "TERREN"}
-    },
-    [16931] = {
-      {rank = 1, player = "CERNED"},
-      {rank = 2, player = "ILLITHYA"}
-    },
-    [16942] = {
-      {rank = 1, player = "MCKEE"}
-    },
-    [16950] = {
-      {rank = 1, player = "PEDROLITO"},
-      {rank = 2, player = "BOSEIJU"},
-      {rank = 3, player = "LEHOOF"}
-    },
-    [16958] = {
-      {rank = 1, player = "DOUWI"},
-      {rank = 2, player = "KALEN"},
-      {rank = 3, player = "DEASP"}
-    },
-    [16966] = {
-      {rank = 1, player = "JEANAIMARRE"},
-      {rank = 2, player = "MWC"},
-      {rank = 3, player = "DARNOM"}
-    },
-    [19360] = {
-      {rank = 1, player = "MUNDUK"},
-      {rank = 2, player = "HEYLARI"}
-    },
-    [19363] = {
-      {rank = 1, player = "NAHEULL"},
-      {rank = 2, player = "KROKADIN"},
-      {rank = 3, player = "MCKEE"}
-    },
-    [19356] = {
-      {rank = 1, player = "SOUFFRANCE"},
-      {rank = 2, player = "SEVILLIA"}
-    },
-    [19364] = {
-      {rank = 1, player = "MWC"},
-      {rank = 2, player = "BULLDOZER"}
-    },
-    [19358] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19436] = {
-      {rank = 1, player = "BULLDOZER"}
-    },
-    [19437] = {
-      {rank = 1, player = "CAILLOU"},
-      {rank = 2, player = "DEASP"},
-      {rank = 3, player = "DRAIN"}
-    },
-    [19354] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19438] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19439] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19362] = {
-      {rank = 1, player = "KROKADIN"}
-    },
-    [19434] = {
-      {rank = 1, player = "RAND"}
-    },
-    [19435] = {
-      {rank = 1, player = "RAND"}
-    },
-  },
+	generatedDate = "2026-04-03",
+	wishlist = {
+		["MWC"] = { 17204, 17104 },
+		["CYNDA"] = { 18820, 18842, 16900 },
+		["MIQUETANERE"] = { 19140, 18875, 16900, 16831, 18814 },
+		["YAKHAI"] = { 17063 },
+		["COVAS"] = { 18810, 19140, 18814 },
+		["DEASP"] = { 19140 },
+		["CAILLOU"] = { 19140, 16853 },
+		["NONOEIL"] = { 17063 },
+		["SOUFFRANCE"] = { 18820, 58205, 16922 },
+	},
+	attributions = {
+		[19336] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19337] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19369] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19370] = {
+			{ rank = 1, player = "SOUFFRANCE" },
+		},
+		[16904] = {
+			{ rank = 1, player = "MIQUETAMERE" },
+		},
+		[16911] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16918] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16926] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16934] = {
+			{ rank = 1, player = "CERNED" },
+		},
+		[16935] = {
+			{ rank = 1, player = "MCKEE" },
+		},
+		[16943] = {
+			{ rank = 1, player = "POKPOK" },
+			{ rank = 2, player = "MUNDUK" },
+		},
+		[16951] = {
+			{ rank = 1, player = "DEASP" },
+			{ rank = 2, player = "KALEN" },
+		},
+		[16959] = {
+			{ rank = 1, player = "BULLDOZZER" },
+			{ rank = 2, player = "JENAIMARREXP" },
+			{ rank = 3, player = "KROKADIN" },
+		},
+		[19334] = {
+			{ rank = 1, player = "DOUWI" },
+			{ rank = 2, player = "BULLDOZZER" },
+			{ rank = 3, player = "MWC" },
+		},
+		[19335] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19339] = {
+			{ rank = 1, player = "SALOPIOT" },
+		},
+		[19340] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19371] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19372] = {
+			{ rank = 1, player = "BULLDOZZER" },
+			{ rank = 2, player = " " },
+			{ rank = 3, player = "JENAIMARREXP" },
+		},
+		[16818] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16903] = {
+			{ rank = 1, player = "SHARIVARY" },
+		},
+		[16910] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16925] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16933] = {
+			{ rank = 1, player = "CERNED" },
+		},
+		[16936] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16944] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16952] = {
+			{ rank = 1, player = "KARANIR" },
+			{ rank = 2, player = "KALEN" },
+			{ rank = 3, player = "DOUWI" },
+		},
+		[16960] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19348] = {
+			{ rank = 1, player = "CAILLOU" },
+		},
+		[19341] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19342] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19373] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19374] = {
+			{ rank = 1, player = "SELVIA" },
+			{ rank = 2, player = "HEYLARI" },
+			{ rank = 3, player = "LEHOOF" },
+		},
+		[16898] = {
+			{ rank = 1, player = "MIQUETAMERE" },
+		},
+		[16906] = {
+			{ rank = 1, player = "WORLDE" },
+		},
+		[16912] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16919] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16927] = {
+			{ rank = 1, player = "CERNED" },
+		},
+		[16941] = {
+			{ rank = 1, player = "MCKEE" },
+		},
+		[16949] = {
+			{ rank = 1, player = "LEHOOF" },
+			{ rank = 2, player = "PEDRO" },
+			{ rank = 3, player = "RAGEUX" },
+		},
+		[16957] = {
+			{ rank = 1, player = "KALEN" },
+		},
+		[16965] = {
+			{ rank = 1, player = "HODVIDAR" },
+			{ rank = 2, player = "DARNOM" },
+			{ rank = 3, player = "MWC" },
+		},
+		[19350] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19351] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19343] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19344] = {
+			{ rank = 1, player = "LEHOOF" },
+		},
+		[19365] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19398] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19399] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19400] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19401] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19402] = {
+			{ rank = 1, player = "BULLDOZZER" },
+			{ rank = 2, player = "DARNOM" },
+		},
+		[16899] = {
+			{ rank = 1, player = "SHARIVARY" },
+		},
+		[16907] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16913] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16920] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16940] = {
+			{ rank = 1, player = "MCKEE" },
+		},
+		[16948] = {
+			{ rank = 1, player = "POKPOK" },
+			{ rank = 2, player = "PEDRO" },
+			{ rank = 3, player = "MUNDUK" },
+		},
+		[16956] = {
+			{ rank = 1, player = "KARANIR" },
+		},
+		[16964] = {
+			{ rank = 1, player = "HODVIDAR" },
+			{ rank = 2, player = "MWC" },
+			{ rank = 3, player = "JENAIMARREXP" },
+		},
+		[19353] = {
+			{ rank = 1, player = "SHREK" },
+			{ rank = 2, player = "HODVIDAR" },
+		},
+		[19355] = {
+			{ rank = 1, player = "SALOPIOT" },
+		},
+		[19394] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19395] = {
+			{ rank = 1, player = "CAILLOU" },
+			{ rank = 2, player = "DEASP" },
+			{ rank = 3, player = "TERREN" },
+		},
+		[19396] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19397] = {
+			{ rank = 1, player = "POKPOK" },
+		},
+		[19345] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19368] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19403] = {
+			{ rank = 1, player = "SEVILIA" },
+			{ rank = 2, player = "HEYLARI" },
+			{ rank = 3, player = "SOUFFRANCE" },
+		},
+		[19405] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19406] = {
+			{ rank = 1, player = "NAHEUL" },
+			{ rank = 2, player = "HODVIDAR" },
+		},
+		[19407] = {
+			{ rank = 1, player = "CERNED" },
+		},
+		[16899] = {
+			{ rank = 1, player = "SHARIVARY" },
+		},
+		[16907] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16913] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16920] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16928] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16940] = {
+			{ rank = 1, player = "MCKEE" },
+		},
+		[16948] = {
+			{ rank = 1, player = "POKPOK" },
+			{ rank = 2, player = "PEDRO" },
+			{ rank = 3, player = "MUNDUK" },
+		},
+		[16956] = {
+			{ rank = 1, player = "KARANIR" },
+		},
+		[16964] = {
+			{ rank = 1, player = "HODVIDAR" },
+			{ rank = 2, player = "MWC" },
+			{ rank = 3, player = "JENAIMARREXP" },
+		},
+		[19353] = {
+			{ rank = 1, player = "SHREK" },
+			{ rank = 2, player = "HODVIDAR" },
+		},
+		[19355] = {
+			{ rank = 1, player = "SALOPIOT" },
+		},
+		[19394] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19395] = {
+			{ rank = 1, player = "CAILLOU" },
+			{ rank = 2, player = "DEASP" },
+			{ rank = 3, player = "TERREN" },
+		},
+		[19396] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19397] = {
+			{ rank = 1, player = "POKPOK" },
+		},
+		[19357] = {
+			{ rank = 1, player = "ELENELOR" },
+		},
+		[19367] = {
+			{ rank = 1, player = "SEVILIA" },
+			{ rank = 2, player = "SALOPIOT" },
+		},
+		[19430] = {
+			{ rank = 1, player = "POKPOK" },
+		},
+		[19431] = {
+			{ rank = 1, player = "DARNOM" },
+		},
+		[19432] = {
+			{ rank = 1, player = "JEANAIMARRE" },
+			{ rank = 2, player = "ELENELOR" },
+		},
+		[19433] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16899] = {
+			{ rank = 1, player = "SHARIVARY" },
+		},
+		[16907] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16913] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16920] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16928] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16940] = {
+			{ rank = 1, player = "MCKEE" },
+		},
+		[16948] = {
+			{ rank = 1, player = "POKPOK" },
+			{ rank = 2, player = "PEDRO" },
+			{ rank = 3, player = "MUNDUK" },
+		},
+		[16956] = {
+			{ rank = 1, player = "KARANIR" },
+		},
+		[16964] = {
+			{ rank = 1, player = "HODVIDAR" },
+			{ rank = 2, player = "MWC" },
+			{ rank = 3, player = "JENAIMARREXP" },
+		},
+		[19353] = {
+			{ rank = 1, player = "SHREK" },
+			{ rank = 2, player = "HODVIDAR" },
+		},
+		[19355] = {
+			{ rank = 1, player = "SALOPIOT" },
+		},
+		[19394] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19395] = {
+			{ rank = 1, player = "CAILLOU" },
+			{ rank = 2, player = "DEASP" },
+			{ rank = 3, player = "TERREN" },
+		},
+		[19396] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19397] = {
+			{ rank = 1, player = "POKPOK" },
+		},
+		[19385] = {
+			{ rank = 1, player = "DEASP" },
+			{ rank = 2, player = "CAILLOU" },
+			{ rank = 3, player = "MUNDUK" },
+		},
+		[19387] = {
+			{ rank = 1, player = "KROKADIN" },
+		},
+		[19388] = {
+			{ rank = 1, player = "SOUFFRANCE" },
+		},
+		[19389] = {
+			{ rank = 1, player = "RAGEUX" },
+		},
+		[19386] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19390] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19391] = {
+			{ rank = 1, player = "BOSEIJU" },
+		},
+		[19392] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19393] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16832] = {
+			{ rank = 1, player = "WORLDE" },
+		},
+		[16902] = {
+			{ rank = 1, player = "SHARIVARY" },
+		},
+		[16917] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16924] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16932] = {
+			{ rank = 1, player = "CERNED" },
+		},
+		[16937] = {
+			{ rank = 1, player = "MCKEE" },
+			{ rank = 2, player = "SHREK" },
+		},
+		[16945] = {
+			{ rank = 1, player = "RAGEUX" },
+		},
+		[16953] = {
+			{ rank = 1, player = "DOUWI" },
+			{ rank = 2, player = "KALEN" },
+			{ rank = 3, player = "DEASP" },
+		},
+		[16961] = {
+			{ rank = 1, player = "MWC" },
+			{ rank = 2, player = "JEANAIMARRE" },
+			{ rank = 3, player = "DARNOM" },
+		},
+		[19349] = {
+			{ rank = 1, player = "DARNOM" },
+		},
+		[19352] = {
+			{ rank = 1, player = "DAZAA" },
+			{ rank = 2, player = "WORLDE" },
+		},
+		[19347] = {
+			{ rank = 1, player = "CERNED" },
+		},
+		[19361] = {
+			{ rank = 1, player = "MCKEE" },
+		},
+		[19002] = {
+			{ rank = 1, player = "KROKADIN" },
+		},
+		[19003] = {
+			{ rank = 1, player = "DARNOM" },
+		},
+		[19375] = {
+			{ rank = 1, player = "SOUFFRANCE" },
+			{ rank = 2, player = "HEYLARI" },
+		},
+		[19376] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19377] = {
+			{ rank = 1, player = "MCKEE" },
+			{ rank = 2, player = "DAZAA" },
+		},
+		[19378] = {
+			{ rank = 1, player = "SEVILIA" },
+		},
+		[19379] = {
+			{ rank = 1, player = "SOUFFRANCE" },
+			{ rank = 2, player = "LEHOOF" },
+		},
+		[19380] = {
+			{ rank = 1, player = "PEDRO" },
+			{ rank = 2, player = "RAGEUX" },
+			{ rank = 3, player = "SHREK" },
+		},
+		[19381] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19382] = {
+			{ rank = 1, player = "DEASP" },
+			{ rank = 2, player = "POKPOK" },
+			{ rank = 3, player = "MUNDUK" },
+		},
+		[16897] = {
+			{ rank = 1, player = "SHARIVARY" },
+			{ rank = 2, player = "MIQUETAMERE" },
+		},
+		[16905] = {
+			{ rank = 1, player = "WORLDE" },
+			{ rank = 2, player = "DAZAA" },
+		},
+		[16916] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[16923] = {
+			{ rank = 1, player = "TERREN" },
+		},
+		[16931] = {
+			{ rank = 1, player = "CERNED" },
+			{ rank = 2, player = "ILITHYIA" },
+		},
+		[16942] = {
+			{ rank = 1, player = "MCKEE" },
+		},
+		[16950] = {
+			{ rank = 1, player = "PEDROLITO" },
+			{ rank = 2, player = "BOSEIJU" },
+			{ rank = 3, player = "LEHOOF" },
+		},
+		[16958] = {
+			{ rank = 1, player = "DOUWI" },
+			{ rank = 2, player = "KALEN" },
+			{ rank = 3, player = "DEASP" },
+		},
+		[16966] = {
+			{ rank = 1, player = "JEANAIMARRE" },
+			{ rank = 2, player = "MWC" },
+			{ rank = 3, player = "DARNOM" },
+		},
+		[19360] = {
+			{ rank = 1, player = "MUNDUK" },
+			{ rank = 2, player = "HEYLARI" },
+		},
+		[19363] = {
+			{ rank = 1, player = "NAHEUL" },
+			{ rank = 2, player = "KROKADIN" },
+			{ rank = 3, player = "MCKEE" },
+		},
+		[19356] = {
+			{ rank = 1, player = "SOUFFRANCE" },
+			{ rank = 2, player = "SEVILLIA" },
+		},
+		[19364] = {
+			{ rank = 1, player = "MWC" },
+			{ rank = 2, player = "BULLDOZER" },
+		},
+		[19358] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19436] = {
+			{ rank = 1, player = "BULLDOZER" },
+		},
+		[19437] = {
+			{ rank = 1, player = "CAILLOU" },
+			{ rank = 2, player = "DEASP" },
+			{ rank = 3, player = "CARADECONA" },
+		},
+		[19354] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19438] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19439] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19362] = {
+			{ rank = 1, player = "KROKADIN" },
+		},
+		[19434] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[19435] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33150] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33151] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33152] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33153] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33154] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33155] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33149] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33156] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33157] = {
+			{ rank = 1, player = "WORLDE" },
+		},
+		[33073] = {
+			{ rank = 1, player = "ILLYTHIA" },
+		},
+		[33074] = {
+			{ rank = 1, player = "DAZAA" },
+			{ rank = 2, player = "WORLDE" },
+		},
+		[33081] = {
+			{ rank = 1, player = "DAZAA" },
+			{ rank = 2, player = "DARNOM" },
+		},
+		[33075] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33076] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33077] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33078] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33079] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33089] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33086] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33087] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[33080] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[17063] = {
+			{ rank = 1, player = "PEDRO" },
+			{ rank = 2, player = "SHREK" },
+		},
+		[19137] = {
+			{ rank = 1, player = "BULLDOZZER" },
+		},
+		[61652] = {
+			{ rank = 1, player = "CAILLOU" },
+		},
+		[61206] = {
+			{ rank = 1, player = "SOUFFRANCE" },
+		},
+		[61211] = {
+			{ rank = 1, player = "RAND" },
+		},
+		[61205] = {
+			{ rank = 1, player = "DEASP" },
+			{ rank = 2, player = "KARANIR" },
+			{ rank = 3, player = "LEHOOF" },
+		},
+		[61209] = {
+			{ rank = 1, player = "LEHOOF" },
+			{ rank = 2, player = "SEVILIA" },
+		},
+		[61208] = {
+			{ rank = 1, player = "CARADECONA" },
+			{ rank = 2, player = "TERREN" },
+		},
+	},
 }
 -- WISHLIST_DATA_END
