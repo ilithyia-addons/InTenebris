@@ -1,7 +1,8 @@
 -- MinimapButton.lua
 -- Minimap button that toggles the InTenebris main frame
 
-local minimapButtonAngle = 220
+local DEFAULT_ANGLE = 220
+local minimapButtonAngle = DEFAULT_ANGLE
 local isMinimapButtonDragging = false
 
 -- Create the button
@@ -68,6 +69,10 @@ end)
 
 button:SetScript("OnDragStop", function()
 	isMinimapButtonDragging = false
+	-- Save angle to character DB
+	if InTenebris.db and InTenebris.db.char then
+		InTenebris.db.char.minimapAngle = minimapButtonAngle
+	end
 end)
 
 button:SetScript("OnUpdate", function()
@@ -83,5 +88,13 @@ button:SetScript("OnUpdate", function()
 	UpdateMinimapButtonPosition()
 end)
 
--- Set initial position
+-- Load saved position from AceDB (called from OnInitialize)
+function InTenebris:LoadMinimapButtonPosition()
+	if self.db and self.db.char and self.db.char.minimapAngle then
+		minimapButtonAngle = self.db.char.minimapAngle
+	end
+	UpdateMinimapButtonPosition()
+end
+
+-- Set initial position (default, will be overridden by OnInitialize if saved data exists)
 UpdateMinimapButtonPosition()

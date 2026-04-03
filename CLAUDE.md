@@ -16,7 +16,9 @@ InTenebris is a World of Warcraft 1.12 (Vanilla) addon for the TurtleWoW private
 
 ## Architecture
 
-Built on the Ace2 framework (AceAddon-2.0, AceEvent-2.0, AceHook-2.1). New files must be registered in `InTenebris.toc` to be loaded by the WoW client.
+Built on the Ace2 framework. Prefer Ace2 libraries over raw WoW API whenever they provide relevant functionality — add new Ace2 modules to the TOC and addon mixin as needed (e.g., AceDB-2.0 for saved variables, AceConsole-2.0 for slash commands). Currently using: AceAddon-2.0, AceEvent-2.0, AceHook-2.1, AceDB-2.0. New files must be registered in `InTenebris.toc` to be loaded by the WoW client.
+
+**Saved variables**: Use AceDB-2.0 (`InTenebrisDB`). Use `self.db.char.*` for per-character data (e.g., UI positions), `self.db.profile.*` for addon options, and `self.db.account.*` for account-wide data.
 
 **Data flow**:
 1. Wishlist/attribution data is maintained in a Google Sheet

@@ -1,4 +1,4 @@
-InTenebris = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceHook-2.1")
+InTenebris = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceHook-2.1", "AceDB-2.0")
 
 -- Class colors for tooltip display
 local CLASS_COLORS = {
@@ -119,6 +119,9 @@ function InTenebris:UpdateRaidRosterCache()
 end
 
 function InTenebris:OnInitialize()
+	-- Register saved variables database
+	self:RegisterDB("InTenebrisDB")
+
 	-- Load wishlist data from WishlistData.lua (assigned to InTenebris.wishlistData)
 	wishlistData = self.wishlistData or {
 		wishlist = {},
@@ -138,6 +141,11 @@ function InTenebris:OnInitialize()
 
 	-- Build initial raid roster cache
 	self:UpdateRaidRosterCache()
+
+	-- Load saved minimap button position
+	if self.LoadMinimapButtonPosition then
+		self:LoadMinimapButtonPosition()
+	end
 end
 
 function InTenebris:OnEnable()

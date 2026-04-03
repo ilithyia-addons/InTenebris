@@ -3,12 +3,13 @@
 ## Notes: Displays wishlist information in tooltips
 ## Author: Ilithyia
 ## Version: 1.0.0
-## SavedVariables:
+## SavedVariables: InTenebrisDB
 
 Libs\AceLibrary\AceLibrary.lua
 Libs\AceOO-2.0\AceOO-2.0.lua
 Libs\AceAddon-2.0\AceAddon-2.0.lua
 Libs\AceEvent-2.0\AceEvent-2.0.lua
+Libs\AceDB-2.0\AceDB-2.0.lua
 
 InTenebris.lua
 WishlistData.lua
