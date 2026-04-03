@@ -1,8 +1,7 @@
 -- MinimapButton.lua
 -- Minimap button that toggles the InTenebris main frame
 
-local DEFAULT_ANGLE = 220
-local minimapButtonAngle = DEFAULT_ANGLE
+local minimapButtonAngle = 220
 local isMinimapButtonDragging = false
 
 -- Create the button

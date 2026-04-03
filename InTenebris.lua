@@ -189,13 +189,14 @@ function InTenebris:IsPlayerInRaid(playerNameLower)
 	return raidRosterCache[playerNameLower] ~= nil
 end
 
--- Get color code for class
+-- Pre-computed class color codes (avoids string.format on every tooltip hover)
+local CLASS_COLOR_CODES = {}
+for class, color in pairs(CLASS_COLORS) do
+	CLASS_COLOR_CODES[class] = string.format("|cff%02x%02x%02x", color.r * 255, color.g * 255, color.b * 255)
+end
+
 function InTenebris:GetClassColorCode(class)
-	if class and CLASS_COLORS[class] then
-		local color = CLASS_COLORS[class]
-		return string.format("|cff%02x%02x%02x", color.r * 255, color.g * 255, color.b * 255)
-	end
-	return "|cff999999" -- Gray for unknown class
+	return CLASS_COLOR_CODES[class] or "|cff999999"
 end
 
 local function AddHeaderToTooltip(frame)
@@ -204,10 +205,19 @@ local function AddHeaderToTooltip(frame)
 	frame:AddLine("|cffffd94dIn Tenebris|r")
 end
 
+local function ExtractItemID(link)
+	if not link then
+		return nil
+	end
+	local _, _, id = string.find(link, "item:(%d+)")
+	return tonumber(id)
+end
+
 local function AddInTenebrisDataToTooltip(frame, itemID)
 	local wishlistPlayersLower = wishlistLookup[itemID]
 	local itemAttributions = attributionLookup[itemID]
 	local shiftKeyPressed = IsShiftKeyDown()
+	local alwaysShow = InTenebris.db.profile.showAttributions == "always"
 	local headerAdded = false
 
 	-- If no data, don't add anything
@@ -238,8 +248,6 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 			end
 		end
 
-		-- Show attributions: always if option set or Shift held, otherwise raid members only
-		local alwaysShow = InTenebris.db.profile.showAttributions == "always"
 		local attributionsToShow = (alwaysShow or shiftKeyPressed) and allAttributions or raidAttributions
 		if table.getn(attributionsToShow) > 0 then
 			if headerAdded == false then
@@ -273,8 +281,6 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 			end
 		end
 
-		-- Show wishlisted by: always if option set or Shift held, otherwise raid members only
-		local alwaysShow = InTenebris.db.profile.showAttributions == "always"
 		local wishlisters = (alwaysShow or shiftKeyPressed) and allWishlisters or raidWishlisters
 		if table.getn(wishlisters) > 0 then
 			if headerAdded == false then
@@ -308,86 +314,47 @@ function InTenebris:HookTooltips()
 	end
 
 	InTenebris:SecureHook("SetItemRef", function(itemLink)
-		-- Extract item ID from link
-		local _, _, itemID = string.find(itemLink, "item:(%d+)")
-		itemID = tonumber(itemID)
-
-		if not itemID then
-			return
+		local itemID = ExtractItemID(itemLink)
+		if itemID then
+			AddInTenebrisDataToTooltip(ItemRefTooltip, itemID)
 		end
-
-		AddInTenebrisDataToTooltip(ItemRefTooltip, itemID)
 	end)
 
 	-- Hook AtlasLootTooltip
 	if IsAddOnLoaded("AtlasLoot") then
 		InTenebris:SecureHook(AtlasLootTooltip, "SetHyperlink", function(self, itemLink)
-			-- Extract item ID from link
-			local _, _, itemID = string.find(itemLink, "item:(%d+)")
-			itemID = tonumber(itemID)
-
-			if not itemID then
-				return
+			local itemID = ExtractItemID(itemLink)
+			if itemID then
+				AddInTenebrisDataToTooltip(AtlasLootTooltip, itemID)
 			end
-
-			AddInTenebrisDataToTooltip(AtlasLootTooltip, itemID)
 		end)
 	end
 end
 
 function gameTooltipHooks:SetHyperlink(itemstring)
-	-- Extract item ID from link
-	local _, _, itemID = string.find(itemstring, "item:(%d+)")
-	itemID = tonumber(itemID)
-
-	if not itemID then
-		return
+	local itemID = ExtractItemID(itemstring)
+	if itemID then
+		AddInTenebrisDataToTooltip(GameTooltip, itemID)
 	end
-
-	AddInTenebrisDataToTooltip(GameTooltip, itemID)
 end
 
 function gameTooltipHooks:SetLootItem(slot)
-	local link = GetLootSlotLink(slot)
-	if link then
-		-- Extract item ID from link
-		local _, _, itemID = string.find(link, "item:(%d+)")
-		itemID = tonumber(itemID)
-
-		if not itemID then
-			return
-		end
-
+	local itemID = ExtractItemID(GetLootSlotLink(slot))
+	if itemID then
 		AddInTenebrisDataToTooltip(GameTooltip, itemID)
 	end
 end
 
 function gameTooltipHooks:SetBagItem(bag, slot)
-	local link = GetContainerItemLink(bag, slot)
-	if link then
-		-- Extract item ID from link
-		local _, _, itemID = string.find(link, "item:(%d+)")
-		itemID = tonumber(itemID)
-
-		if not itemID then
-			return
-		end
-
+	local itemID = ExtractItemID(GetContainerItemLink(bag, slot))
+	if itemID then
 		AddInTenebrisDataToTooltip(GameTooltip, itemID)
 	end
 end
 
 function gameTooltipHooks:SetInventoryItem(unit, slot)
-	local link = GetInventoryItemLink(unit, slot)
-	if link then
-		-- Extract item ID from link
-		local _, _, itemID = string.find(link, "item:(%d+)")
-		itemID = tonumber(itemID)
-
-		if not itemID then
-			return
-		end
-
+	local itemID = ExtractItemID(GetInventoryItemLink(unit, slot))
+	if itemID then
 		AddInTenebrisDataToTooltip(GameTooltip, itemID)
 	end
 end
