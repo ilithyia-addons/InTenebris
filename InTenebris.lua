@@ -263,7 +263,7 @@ local function AddInTenebrisDataToTooltip(parentFrame, itemID)
 
 	-- Set up secondary tooltip anchored to the parent
 	secondaryTooltip:SetOwner(parentFrame, "ANCHOR_NONE")
-	secondaryTooltip:SetPoint("TOPLEFT", parentFrame, "TOPRIGHT", 0, 0)
+	secondaryTooltip:SetPoint("TOPLEFT", parentFrame, "TOPRIGHT", 4, 0)
 	secondaryTooltip:AddLine("|cffffd94dIn Tenebris|r")
 
 	-- Add attribution info
