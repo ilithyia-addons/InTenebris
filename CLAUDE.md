@@ -42,3 +42,5 @@ Built on the Ace2 framework (AceAddon-2.0, AceEvent-2.0, AceHook-2.1). New files
 - Tooltip manipulation via `frame:AddLine()` and `frame:Show()`
 - Item links use the format `item:ITEMID:...`
 - Color codes use `|cffRRGGBB...|r` escape sequences
+- `SetPoint()` requires explicit parent and relative point — use `SetPoint("CENTER", parent, "CENTER", 0, 0)`, never `SetPoint("CENTER")` alone
+- Frame script handlers use `this`/`arg1` globals, not function parameters

@@ -44,9 +44,9 @@ headerTexture:SetWidth(280)
 headerTexture:SetHeight(64)
 headerTexture:SetPoint("TOP", mainFrame, "TOP", 0, 12)
 
--- Title text
+-- Title text (anchored to header ornament center)
 local titleText = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-titleText:SetPoint("TOP", mainFrame, "TOP", 0, 4)
+titleText:SetPoint("TOP", headerTexture, "TOP", 0, -14)
 titleText:SetText("In Tenebris")
 
 -- Close button (standard WoW template)
