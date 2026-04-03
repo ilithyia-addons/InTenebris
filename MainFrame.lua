@@ -2,8 +2,8 @@
 -- Main configuration frame with side-tab navigation for InTenebris
 
 -- Layout constants
-local FRAME_WIDTH = 560
-local FRAME_HEIGHT = 420
+local FRAME_WIDTH = 680
+local FRAME_HEIGHT = 500
 local SIDE_PANEL_WIDTH = 130
 local HEADER_HEIGHT = 50
 
@@ -258,11 +258,159 @@ local lootPlaceholder = lootTab:CreateFontString(nil, "OVERLAY", "GameFontNormal
 lootPlaceholder:SetPoint("CENTER", lootTab, "CENTER", 0, 0)
 lootPlaceholder:SetText("|cff666666Coming soon.|r")
 
--- Strategies tab (placeholder)
+-- ============================================================
+-- Strategies tab
+-- ============================================================
+
 local strategiesTab = InTenebris:RegisterTab("strategies", "Strategies", 2)
-local strategiesPlaceholder = strategiesTab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-strategiesPlaceholder:SetPoint("CENTER", strategiesTab, "CENTER", 0, 0)
-strategiesPlaceholder:SetText("|cff666666Coming soon.|r")
+
+-- Image dimensions (fill content width, 16:9 aspect ratio)
+local STRATEGY_IMAGE_WIDTH = FRAME_WIDTH - SIDE_PANEL_WIDTH - 84
+local STRATEGY_IMAGE_HEIGHT = math.floor(STRATEGY_IMAGE_WIDTH * 9 / 16)
+
+-- Strategy data per raid
+local RAID_STRATEGIES = {
+	{
+		id = "bwl",
+		name = "Blackwing Lair",
+		bosses = {
+			{
+				name = "Razorgore the Untamed",
+				image = "Interface\\AddOns\\InTenebris\\Textures\\Strategies\\Blackwing Lair\\Razorgore",
+			},
+			{
+				name = "Vaelastrasz the Corrupt",
+				image = "Interface\\AddOns\\InTenebris\\Textures\\Strategies\\Blackwing Lair\\Vaelastrasz",
+			},
+			{
+				name = "Broodlord Lashlayer",
+				image = "Interface\\AddOns\\InTenebris\\Textures\\Strategies\\Blackwing Lair\\Lashlayer",
+			},
+			{
+				name = "Firemaw",
+				image = "Interface\\AddOns\\InTenebris\\Textures\\Strategies\\Blackwing Lair\\Firemaw",
+			},
+			{
+				name = "Ebonroc / Flamegor",
+				image = "Interface\\AddOns\\InTenebris\\Textures\\Strategies\\Blackwing Lair\\Ebonroc-Flamegor",
+			},
+			{
+				name = "Chromaggus",
+				image = "Interface\\AddOns\\InTenebris\\Textures\\Strategies\\Blackwing Lair\\Chromaggus",
+				text = "1er  SOUFFLE => HEAL 1 & 3\n2\195\168me SOUFFLE => HEAL 2 & 4\n3\195\168me SOUFFLE => HEAL 5 & 7\n4\195\168me SOUFFLE => HEAL 6 & 8\n\nOrdre de soak du souffle de bronze => Les heals cit\195\169s restent \195\160 port\195\169e du tank et utilisent leur sable pour sortir du stun.",
+			},
+		},
+	},
+}
+
+-- Raid dropdown
+local raidDropdownLabel = strategiesTab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+raidDropdownLabel:SetPoint("TOPLEFT", strategiesTab, "TOPLEFT", 4, 2)
+raidDropdownLabel:SetText("Raid:")
+
+local raidDropdown = CreateFrame("Frame", "InTenebrisRaidDropdown", strategiesTab, "UIDropDownMenuTemplate")
+raidDropdown:SetPoint("LEFT", raidDropdownLabel, "RIGHT", -8, -2)
+
+-- Scroll frame for strategy content (below dropdown)
+local strategiesScroll =
+	CreateFrame("ScrollFrame", "InTenebrisStrategiesScroll", strategiesTab, "UIPanelScrollFrameTemplate")
+strategiesScroll:SetPoint("TOPLEFT", strategiesTab, "TOPLEFT", 0, -26)
+strategiesScroll:SetPoint("BOTTOMRIGHT", strategiesTab, "BOTTOMRIGHT", -26, 0)
+
+local strategiesScrollChild = CreateFrame("Frame", nil, strategiesScroll)
+strategiesScrollChild:SetWidth(STRATEGY_IMAGE_WIDTH)
+strategiesScrollChild:SetHeight(1)
+strategiesScroll:SetScrollChild(strategiesScrollChild)
+
+-- Build UI for a raid's strategy content
+local raidContentFrames = {} -- id -> { frame, height }
+
+local function BuildRaidStrategyContent(raidData)
+	local frame = CreateFrame("Frame", nil, strategiesScrollChild)
+	frame:SetPoint("TOPLEFT", strategiesScrollChild, "TOPLEFT", 0, 0)
+	frame:SetPoint("TOPRIGHT", strategiesScrollChild, "TOPRIGHT", 0, 0)
+	frame:Hide()
+
+	local yOffset = 0
+
+	for _, boss in ipairs(raidData.bosses) do
+		-- Boss title
+		local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+		title:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -yOffset)
+		title:SetText(boss.name)
+		title:SetTextColor(1.0, 0.85, 0.30, 1)
+		yOffset = yOffset + 22
+
+		-- Boss image
+		if boss.image then
+			local img = frame:CreateTexture(nil, "ARTWORK")
+			img:SetWidth(STRATEGY_IMAGE_WIDTH)
+			img:SetHeight(STRATEGY_IMAGE_HEIGHT)
+			img:SetTexture(boss.image)
+			img:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -yOffset)
+			yOffset = yOffset + STRATEGY_IMAGE_HEIGHT + 8
+		end
+
+		-- Boss text
+		if boss.text then
+			local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			text:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -yOffset)
+			text:SetWidth(STRATEGY_IMAGE_WIDTH)
+			text:SetJustifyH("LEFT")
+			text:SetText(boss.text)
+			yOffset = yOffset + (text:GetHeight() or 80) + 8
+		end
+
+		-- Spacing between bosses
+		yOffset = yOffset + 20
+	end
+
+	frame:SetHeight(yOffset)
+	raidContentFrames[raidData.id] = { frame = frame, height = yOffset }
+end
+
+-- Build content for all raids
+for _, raidData in ipairs(RAID_STRATEGIES) do
+	BuildRaidStrategyContent(raidData)
+end
+
+-- Select a raid to display
+local function SelectRaid(raidId)
+	for id, data in pairs(raidContentFrames) do
+		if id == raidId then
+			data.frame:Show()
+			strategiesScrollChild:SetHeight(data.height)
+		else
+			data.frame:Hide()
+		end
+	end
+	strategiesScroll:SetVerticalScroll(0)
+end
+
+-- Initialize raid dropdown
+local function RaidDropdown_Initialize()
+	for _, raidData in ipairs(RAID_STRATEGIES) do
+		local raidId = raidData.id
+		local raidName = raidData.name
+		local info = {}
+		info.text = raidName
+		info.value = raidId
+		info.func = function()
+			UIDropDownMenu_SetSelectedValue(raidDropdown, raidId)
+			SelectRaid(raidId)
+		end
+		info.checked = nil
+		UIDropDownMenu_AddButton(info)
+	end
+end
+
+UIDropDownMenu_Initialize(raidDropdown, RaidDropdown_Initialize)
+UIDropDownMenu_SetWidth(180, raidDropdown)
+
+-- Default to first raid
+UIDropDownMenu_SetSelectedValue(raidDropdown, RAID_STRATEGIES[1].id)
+UIDropDownMenu_SetText(RAID_STRATEGIES[1].name, raidDropdown)
+SelectRaid(RAID_STRATEGIES[1].id)
 
 -- Crafting tab (placeholder)
 local craftingTab = InTenebris:RegisterTab("crafting", "Crafting", 3)
