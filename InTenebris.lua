@@ -1,5 +1,11 @@
 InTenebris = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceHook-2.1", "AceDB-2.0")
 
+-- Register saved variables database
+InTenebris:RegisterDB("InTenebrisDB", "InTenebrisCharDB")
+InTenebris:RegisterDefaults("char", {
+	minimapAngle = 220,
+})
+
 -- Class colors for tooltip display
 local CLASS_COLORS = {
 	["Warrior"] = { r = 0.78, g = 0.61, b = 0.43 },
@@ -119,12 +125,6 @@ function InTenebris:UpdateRaidRosterCache()
 end
 
 function InTenebris:OnInitialize()
-	-- Register saved variables database
-	self:RegisterDB("InTenebrisDB", "InTenebrisCharDB")
-	self:RegisterDefaults("char", {
-		minimapAngle = 220,
-	})
-
 	-- Load wishlist data from WishlistData.lua (assigned to InTenebris.wishlistData)
 	wishlistData = self.wishlistData or {
 		wishlist = {},
