@@ -252,11 +252,353 @@ end
 -- Register Tabs
 -- ============================================================
 
--- Loot Attributions tab (placeholder)
+-- ============================================================
+-- Loot Attributions tab
+-- ============================================================
+
 local lootTab = InTenebris:RegisterTab("loot", "Loot Attributions", 1)
-local lootPlaceholder = lootTab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-lootPlaceholder:SetPoint("CENTER", lootTab, "CENTER", 0, 0)
-lootPlaceholder:SetText("|cff666666Coming soon.|r")
+
+-- Item quality color codes
+local QUALITY_COLORS = {
+	[0] = "ff9d9d9d", -- Poor
+	[1] = "ffffffff", -- Common
+	[2] = "ff1eff00", -- Uncommon
+	[3] = "ff0070dd", -- Rare
+	[4] = "ffa335ee", -- Epic
+	[5] = "ffff8000", -- Legendary
+}
+
+-- Hidden tooltip for forcing item cache
+local scanTooltip = CreateFrame("GameTooltip", "InTenebrisScanTooltip", UIParent, "GameTooltipTemplate")
+scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+
+-- Item info cache: [itemID] = { name = "raw", colored = "|c...|r", quality = N }
+local itemInfoCache = {}
+
+local function CacheItemInfo(itemID)
+	if itemInfoCache[itemID] then
+		return itemInfoCache[itemID]
+	end
+	local name, _, quality = GetItemInfo(itemID)
+	if not name then
+		scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+		scanTooltip:SetHyperlink("item:" .. itemID .. ":0:0:0")
+		scanTooltip:Hide()
+		name, _, quality = GetItemInfo(itemID)
+	end
+	if name then
+		local colorCode = QUALITY_COLORS[quality] or "ffffffff"
+		itemInfoCache[itemID] = {
+			name = name,
+			colored = "|c" .. colorCode .. name .. "|r",
+			quality = quality or 1,
+		}
+	else
+		itemInfoCache[itemID] = {
+			name = "Item #" .. itemID,
+			colored = "|cff999999Item #" .. itemID .. "|r",
+			quality = 0,
+		}
+	end
+	return itemInfoCache[itemID]
+end
+
+-- View state
+local lootCurrentView = "byItem"
+local lootSearchText = ""
+
+-- Content dimensions
+local LOOT_CONTENT_WIDTH = FRAME_WIDTH - SIDE_PANEL_WIDTH - 110
+
+-- View toggle buttons
+local function CreateViewToggleButton(parent, text, x)
+	local btn = CreateFrame("Button", nil, parent)
+	btn:SetWidth(80)
+	btn:SetHeight(22)
+	btn:SetPoint("TOPLEFT", parent, "TOPLEFT", x, 2)
+
+	local bg = btn:CreateTexture(nil, "BACKGROUND")
+	bg:SetAllPoints()
+	bg:SetTexture(0, 0, 0, 0)
+	btn.bg = bg
+
+	local label = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	label:SetPoint("CENTER", btn, "CENTER", 0, 0)
+	label:SetText(text)
+	btn.label = label
+
+	local highlight = btn:CreateTexture(nil, "HIGHLIGHT")
+	highlight:SetAllPoints()
+	highlight:SetTexture(1, 1, 1, 0.05)
+
+	return btn
+end
+
+local byItemButton = CreateViewToggleButton(lootTab, "By Item", 4)
+local byPlayerButton = CreateViewToggleButton(lootTab, "By Player", 88)
+
+local function UpdateViewToggleAppearance()
+	if lootCurrentView == "byItem" then
+		byItemButton.bg:SetTexture(0.6, 0.5, 0.15, 0.25)
+		byItemButton.label:SetTextColor(1.0, 0.85, 0.30, 1)
+		byPlayerButton.bg:SetTexture(0, 0, 0, 0)
+		byPlayerButton.label:SetTextColor(0.55, 0.47, 0.25, 1)
+	else
+		byPlayerButton.bg:SetTexture(0.6, 0.5, 0.15, 0.25)
+		byPlayerButton.label:SetTextColor(1.0, 0.85, 0.30, 1)
+		byItemButton.bg:SetTexture(0, 0, 0, 0)
+		byItemButton.label:SetTextColor(0.55, 0.47, 0.25, 1)
+	end
+end
+
+-- Search box
+local searchBox = CreateFrame("EditBox", "InTenebrisLootSearch", lootTab)
+searchBox:SetFontObject(GameFontNormalSmall)
+searchBox:SetAutoFocus(false)
+searchBox:SetWidth(160)
+searchBox:SetHeight(20)
+searchBox:SetPoint("TOPRIGHT", lootTab, "TOPRIGHT", -4, 0)
+searchBox:SetBackdrop({
+	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileSize = 16,
+	edgeSize = 12,
+	insets = { left = 3, right = 3, top = 3, bottom = 3 },
+})
+searchBox:SetBackdropColor(0.05, 0.05, 0.05, 0.9)
+searchBox:SetBackdropBorderColor(0.4, 0.35, 0.2, 0.6)
+searchBox:SetTextInsets(4, 4, 0, 0)
+searchBox:SetMaxLetters(50)
+
+local searchPlaceholder = searchBox:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+searchPlaceholder:SetPoint("LEFT", searchBox, "LEFT", 6, 0)
+searchPlaceholder:SetText("|cff666666Search...|r")
+
+searchBox:SetScript("OnEscapePressed", function()
+	this:ClearFocus()
+end)
+
+searchBox:SetScript("OnEditFocusGained", function()
+	searchPlaceholder:Hide()
+end)
+
+searchBox:SetScript("OnEditFocusLost", function()
+	if this:GetText() == "" then
+		searchPlaceholder:Show()
+	end
+end)
+
+-- Scroll frame for loot content
+local lootScroll = CreateFrame("ScrollFrame", "InTenebrisLootScroll", lootTab, "UIPanelScrollFrameTemplate")
+lootScroll:SetPoint("TOPLEFT", lootTab, "TOPLEFT", 0, -28)
+lootScroll:SetPoint("BOTTOMRIGHT", lootTab, "BOTTOMRIGHT", -26, 0)
+
+local lootScrollChild = CreateFrame("Frame", nil, lootScroll)
+lootScrollChild:SetWidth(LOOT_CONTENT_WIDTH)
+lootScrollChild:SetHeight(1)
+lootScroll:SetScrollChild(lootScrollChild)
+
+-- FontString pool for reusable text lines
+local lootFontPool = {}
+local lootFontPoolUsed = 0
+
+local function AcquireFontString(fontObject)
+	lootFontPoolUsed = lootFontPoolUsed + 1
+	if not lootFontPool[lootFontPoolUsed] then
+		lootFontPool[lootFontPoolUsed] = lootScrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	end
+	local fs = lootFontPool[lootFontPoolUsed]
+	fs:SetFontObject(fontObject or GameFontNormalSmall)
+	fs:SetTextColor(1, 1, 1, 1)
+	fs:SetJustifyH("LEFT")
+	fs:SetWidth(LOOT_CONTENT_WIDTH)
+	fs:Show()
+	return fs
+end
+
+local function ResetFontPool()
+	for i = 1, lootFontPoolUsed do
+		lootFontPool[i]:Hide()
+		lootFontPool[i]:ClearAllPoints()
+	end
+	lootFontPoolUsed = 0
+end
+
+-- Forward declaration
+local RenderLootAttributions
+
+-- Render the loot attributions list
+RenderLootAttributions = function()
+	ResetFontPool()
+
+	local yOffset = 0
+	local searchLower = string.lower(lootSearchText)
+	local hasSearch = searchLower ~= ""
+
+	if lootCurrentView == "byItem" then
+		-- Collect and sort items by name
+		local items = {}
+		if InTenebris.wishlistData and InTenebris.wishlistData.attributions then
+			for itemID, attributions in pairs(InTenebris.wishlistData.attributions) do
+				local info = CacheItemInfo(itemID)
+				table.insert(items, {
+					itemID = itemID,
+					info = info,
+					attributions = attributions,
+				})
+			end
+		end
+		table.sort(items, function(a, b)
+			return a.info.name < b.info.name
+		end)
+
+		for _, item in ipairs(items) do
+			-- Check search filter: match item name or any player name
+			local matchesSearch = true
+			if hasSearch then
+				matchesSearch = string.find(string.lower(item.info.name), searchLower, 1, true)
+				if not matchesSearch then
+					for _, attr in ipairs(item.attributions) do
+						if string.find(string.lower(attr.player), searchLower, 1, true) then
+							matchesSearch = true
+							break
+						end
+					end
+				end
+			end
+
+			if matchesSearch then
+				-- Item header
+				local header = AcquireFontString(GameFontNormal)
+				header:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 0, -yOffset)
+				header:SetText(item.info.colored)
+				yOffset = yOffset + 16
+
+				-- Attribution entries
+				for _, attr in ipairs(item.attributions) do
+					local entry = AcquireFontString(GameFontNormalSmall)
+					entry:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 16, -yOffset)
+					entry:SetText(attr.rank .. ". " .. attr.player)
+					yOffset = yOffset + 14
+				end
+
+				yOffset = yOffset + 8
+			end
+		end
+	else
+		-- By Player view: invert attributions to player -> items
+		local playerItems = {}
+		local playerList = {}
+
+		if InTenebris.wishlistData and InTenebris.wishlistData.attributions then
+			for itemID, attributions in pairs(InTenebris.wishlistData.attributions) do
+				for _, attr in ipairs(attributions) do
+					local player = attr.player
+					if not playerItems[player] then
+						playerItems[player] = {}
+						table.insert(playerList, player)
+					end
+					table.insert(playerItems[player], {
+						itemID = itemID,
+						rank = attr.rank,
+					})
+				end
+			end
+		end
+
+		table.sort(playerList)
+
+		-- Sort each player's items by rank
+		for _, player in ipairs(playerList) do
+			table.sort(playerItems[player], function(a, b)
+				return a.rank < b.rank
+			end)
+		end
+
+		for _, player in ipairs(playerList) do
+			local items = playerItems[player]
+
+			-- Check search filter: match player name or any item name
+			local matchesSearch = true
+			if hasSearch then
+				matchesSearch = string.find(string.lower(player), searchLower, 1, true)
+				if not matchesSearch then
+					for _, item in ipairs(items) do
+						local info = CacheItemInfo(item.itemID)
+						if string.find(string.lower(info.name), searchLower, 1, true) then
+							matchesSearch = true
+							break
+						end
+					end
+				end
+			end
+
+			if matchesSearch then
+				-- Player header
+				local header = AcquireFontString(GameFontNormal)
+				header:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 0, -yOffset)
+				header:SetText("|cffffd94d" .. player .. "|r")
+				yOffset = yOffset + 16
+
+				-- Item entries
+				for _, item in ipairs(items) do
+					local info = CacheItemInfo(item.itemID)
+					local entry = AcquireFontString(GameFontNormalSmall)
+					entry:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 16, -yOffset)
+					entry:SetText("Rank " .. item.rank .. ": " .. info.colored)
+					yOffset = yOffset + 14
+				end
+
+				yOffset = yOffset + 8
+			end
+		end
+	end
+
+	if yOffset == 0 then
+		local noResults = AcquireFontString(GameFontNormal)
+		noResults:SetPoint("CENTER", lootScrollChild, "TOP", 0, -60)
+		noResults:SetJustifyH("CENTER")
+		noResults:SetText("|cff666666No results found.|r")
+		yOffset = 120
+	end
+
+	lootScrollChild:SetHeight(yOffset)
+	lootScroll:SetVerticalScroll(0)
+
+	UpdateViewToggleAppearance()
+end
+
+-- Wire up view toggle buttons
+byItemButton:SetScript("OnClick", function()
+	lootCurrentView = "byItem"
+	RenderLootAttributions()
+end)
+
+byPlayerButton:SetScript("OnClick", function()
+	lootCurrentView = "byPlayer"
+	RenderLootAttributions()
+end)
+
+-- Wire up search
+searchBox:SetScript("OnTextChanged", function()
+	lootSearchText = this:GetText()
+	if lootSearchText == "" then
+		searchPlaceholder:Show()
+	else
+		searchPlaceholder:Hide()
+	end
+	RenderLootAttributions()
+end)
+
+-- Render on tab show
+local originalLootOnShow = lootTab:GetScript("OnShow")
+lootTab:SetScript("OnShow", function()
+	if originalLootOnShow then
+		originalLootOnShow()
+	end
+	RenderLootAttributions()
+end)
 
 -- ============================================================
 -- Strategies tab
