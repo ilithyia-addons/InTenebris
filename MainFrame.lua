@@ -370,13 +370,33 @@ end
 UIDropDownMenu_Initialize(outOfGroupDropdown, ShowOutOfGroupDropdown_Initialize)
 UIDropDownMenu_SetWidth(80, outOfGroupDropdown)
 
+-- Enable/disable a dropdown (no built-in function in WoW 1.12)
+local function SetDropdownEnabled(frame, enabled)
+	local button = getglobal(frame:GetName() .. "Button")
+	if enabled then
+		button:Enable()
+		UIDropDownMenu_SetText(UIDropDownMenu_GetText(frame), frame)
+	else
+		button:Disable()
+	end
+	-- Dim the text when disabled
+	local text = getglobal(frame:GetName() .. "Text")
+	if text then
+		if enabled then
+			text:SetTextColor(1, 1, 1)
+		else
+			text:SetTextColor(0.5, 0.5, 0.5)
+		end
+	end
+end
+
 -- Sync the out-of-group dropdown state based on the attributions setting
 UpdateOutOfGroupDropdownState = function()
 	local isAlways = InTenebris.db.profile.showAttributions == "always"
 	if isAlways then
 		UIDropDownMenu_SetSelectedValue(outOfGroupDropdown, "yes")
 		UIDropDownMenu_SetText("Yes", outOfGroupDropdown)
-		UIDropDownMenu_DisableDropDown(outOfGroupDropdown)
+		SetDropdownEnabled(outOfGroupDropdown, false)
 	else
 		local currentValue = InTenebris.db.profile.showOutOfGroup
 		UIDropDownMenu_SetSelectedValue(outOfGroupDropdown, currentValue)
@@ -386,7 +406,7 @@ UpdateOutOfGroupDropdownState = function()
 				break
 			end
 		end
-		UIDropDownMenu_EnableDropDown(outOfGroupDropdown)
+		SetDropdownEnabled(outOfGroupDropdown, true)
 	end
 end
 
