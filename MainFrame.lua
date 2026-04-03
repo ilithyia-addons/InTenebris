@@ -281,7 +281,7 @@ optionsScroll:SetPoint("BOTTOMRIGHT", optionsTab, "BOTTOMRIGHT", -26, 0)
 -- Scroll child (all options go here)
 local optionsContent = CreateFrame("Frame", nil, optionsScroll)
 optionsContent:SetWidth(optionsScroll:GetWidth() or 350)
-optionsContent:SetHeight(600)
+optionsContent:SetHeight(1) -- will be updated after all options are laid out
 optionsScroll:SetScrollChild(optionsContent)
 
 -- ============================================================
@@ -427,4 +427,7 @@ optionsTab:SetScript("OnShow", function()
 	end
 	-- Update out-of-group dropdown (handles disable state)
 	UpdateOutOfGroupDropdownState()
+
+	-- Update scroll child height to fit content (expand as more options are added)
+	optionsContent:SetHeight(100)
 end)
