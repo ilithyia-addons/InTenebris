@@ -63,14 +63,23 @@ function generateAttributionData() {
   var col = 5;  // Column E
   var row = 31; // Start at E31
 
+  var consecutiveEmpty = 0;
+
   while (true) {
     var itemCell = sheet.getRange(row, col);
     var itemValue = itemCell.getValue();
 
-    // Stop if we find an empty cell
+    // Stop after 2 consecutive empty rows
     if (!itemValue) {
-      break;
+      consecutiveEmpty += 1;
+      if (consecutiveEmpty >= 2) {
+        break;
+      }
+      row += 1;
+      continue;
     }
+
+    consecutiveEmpty = 0;
 
     // Extract item ID from link
     var itemId = extractItemIdFromLink(itemCell.getRichTextValue());
