@@ -239,13 +239,10 @@ local function GetSecondaryTooltip(parentTooltip)
 		tooltip:SetFrameLevel(parentTooltip:GetFrameLevel())
 		SkinTooltipWithPfUI(tooltip)
 
-		-- Hide secondary tooltip when parent hides
-		local originalOnHide = parentTooltip:GetScript("OnHide")
-		parentTooltip:SetScript("OnHide", function()
+		-- Use a child frame to watch parent show/hide without replacing parent scripts
+		local watchFrame = CreateFrame("Frame", nil, parentTooltip)
+		watchFrame:SetScript("OnHide", function()
 			tooltip:Hide()
-			if originalOnHide then
-				originalOnHide()
-			end
 		end)
 
 		secondaryTooltips[parentName] = tooltip
@@ -254,6 +251,12 @@ local function GetSecondaryTooltip(parentTooltip)
 end
 
 local function AddInTenebrisDataToTooltip(parentFrame, itemID)
+	-- Hide any existing secondary tooltip for this parent
+	local parentName = parentFrame:GetName()
+	if secondaryTooltips[parentName] then
+		secondaryTooltips[parentName]:Hide()
+	end
+
 	local wishlistPlayersLower = wishlistLookup[itemID]
 	local itemAttributions = attributionLookup[itemID]
 	local shiftKeyPressed = IsShiftKeyDown()
@@ -272,7 +275,8 @@ local function AddInTenebrisDataToTooltip(parentFrame, itemID)
 
 	-- Set up secondary tooltip anchored to the parent
 	local secondaryTooltip = GetSecondaryTooltip(parentFrame)
-	secondaryTooltip:SetOwner(parentFrame, "ANCHOR_NONE")
+	secondaryTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+	secondaryTooltip:ClearAllPoints()
 	secondaryTooltip:SetPoint("TOPLEFT", parentFrame, "TOPRIGHT", 4, 0)
 	secondaryTooltip:AddLine("|cffffd94dIn Tenebris|r")
 
