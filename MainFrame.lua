@@ -429,12 +429,55 @@ local function AcquireFontString(fontObject)
 	return fs
 end
 
-local function ResetFontPool()
+-- Item button pool for clickable item names with tooltips
+local lootItemButtonPool = {}
+local lootItemButtonPoolUsed = 0
+
+local function AcquireItemButton(itemID, fontObject)
+	lootItemButtonPoolUsed = lootItemButtonPoolUsed + 1
+	if not lootItemButtonPool[lootItemButtonPoolUsed] then
+		local btn = CreateFrame("Button", nil, lootScrollChild)
+		btn:SetHeight(16)
+		local label = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		label:SetPoint("LEFT", btn, "LEFT", 0, 0)
+		label:SetJustifyH("LEFT")
+		btn.label = label
+		btn:SetScript("OnEnter", function()
+			if this.itemID then
+				GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+				GameTooltip:SetHyperlink("item:" .. this.itemID .. ":0:0:0")
+				GameTooltip:Show()
+			end
+		end)
+		btn:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+		btn:SetScript("OnClick", function()
+			if this.itemID then
+				SetItemRef("item:" .. this.itemID .. ":0:0:0")
+			end
+		end)
+		lootItemButtonPool[lootItemButtonPoolUsed] = btn
+	end
+	local btn = lootItemButtonPool[lootItemButtonPoolUsed]
+	btn.itemID = itemID
+	btn.label:SetFontObject(fontObject or GameFontNormal)
+	btn:SetWidth(LOOT_CONTENT_WIDTH)
+	btn:Show()
+	return btn
+end
+
+local function ResetPools()
 	for i = 1, lootFontPoolUsed do
 		lootFontPool[i]:Hide()
 		lootFontPool[i]:ClearAllPoints()
 	end
 	lootFontPoolUsed = 0
+	for i = 1, lootItemButtonPoolUsed do
+		lootItemButtonPool[i]:Hide()
+		lootItemButtonPool[i]:ClearAllPoints()
+	end
+	lootItemButtonPoolUsed = 0
 end
 
 -- Forward declaration
@@ -442,7 +485,7 @@ local RenderLootAttributions
 
 -- Render the loot attributions list
 RenderLootAttributions = function()
-	ResetFontPool()
+	ResetPools()
 
 	local yOffset = 0
 	local searchLower = string.lower(lootSearchText)
@@ -483,10 +526,10 @@ RenderLootAttributions = function()
 			end
 
 			if matchesSearch then
-				-- Item header
-				local header = AcquireFontString(GameFontNormal)
+				-- Item header (clickable)
+				local header = AcquireItemButton(item.itemID, GameFontNormal)
 				header:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 0, -yOffset)
-				header:SetText(item.info.colored)
+				header.label:SetText(item.info.colored)
 				yOffset = yOffset + 16
 
 				-- Attribution entries
@@ -555,12 +598,12 @@ RenderLootAttributions = function()
 				header:SetText("|cffffd94d" .. player .. "|r")
 				yOffset = yOffset + 16
 
-				-- Item entries
+				-- Item entries (clickable)
 				for _, item in ipairs(items) do
 					local info = CacheItemInfo(item.itemID)
-					local entry = AcquireFontString(GameFontNormalSmall)
+					local entry = AcquireItemButton(item.itemID, GameFontNormalSmall)
 					entry:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 16, -yOffset)
-					entry:SetText("Rank " .. item.rank .. ": " .. info.colored)
+					entry.label:SetText("Rank " .. item.rank .. ": " .. info.colored)
 					yOffset = yOffset + 14
 				end
 
