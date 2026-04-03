@@ -32,6 +32,14 @@ local CLASS_COLORS = {
 	["DRUID"] = { r = 1.00, g = 0.49, b = 0.04 },
 }
 
+-- Utility namespaces
+InTenebris.Utils = {}
+InTenebris.Utils.String = {}
+
+function InTenebris.Utils.String.trim(s)
+	return string.gsub(s, "^%s*(.-)%s*$", "%1")
+end
+
 -- Wishlist data is loaded from WishlistData.lua (stored in InTenebris.wishlistData)
 local wishlistData
 
@@ -54,6 +62,7 @@ function InTenebris:BuildLookupTables()
 	-- Store lowercase names for case-insensitive matching
 	if wishlistData.wishlist then
 		for playerName, items in pairs(wishlistData.wishlist) do
+			playerName = InTenebris.Utils.String.trim(playerName)
 			local playerLower = string.lower(playerName)
 			nameCaseMap[playerLower] = playerName -- Map lowercase to original case
 
@@ -73,8 +82,9 @@ function InTenebris:BuildLookupTables()
 				attributionLookup[itemID] = {}
 			end
 			for _, attribution in ipairs(attributions) do
-				local playerLower = string.lower(attribution.player)
-				nameCaseMap[playerLower] = attribution.player -- Map lowercase to original case
+				local playerTrimmed = InTenebris.Utils.String.trim(attribution.player)
+				local playerLower = string.lower(playerTrimmed)
+				nameCaseMap[playerLower] = playerTrimmed -- Map lowercase to original case
 				table.insert(attributionLookup[itemID], {
 					rank = attribution.rank,
 					playerLower = playerLower,

@@ -472,7 +472,9 @@ RenderLootAttributions = function()
 				matchesSearch = string.find(string.lower(item.info.name), searchLower, 1, true)
 				if not matchesSearch then
 					for _, attr in ipairs(item.attributions) do
-						if string.find(string.lower(attr.player), searchLower, 1, true) then
+						if
+							string.find(string.lower(InTenebris.Utils.String.trim(attr.player)), searchLower, 1, true)
+						then
 							matchesSearch = true
 							break
 						end
@@ -491,7 +493,7 @@ RenderLootAttributions = function()
 				for _, attr in ipairs(item.attributions) do
 					local entry = AcquireFontString(GameFontNormalSmall)
 					entry:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 16, -yOffset)
-					entry:SetText(attr.rank .. ". " .. attr.player)
+					entry:SetText(attr.rank .. ". " .. InTenebris.Utils.String.trim(attr.player))
 					yOffset = yOffset + 14
 				end
 
@@ -506,7 +508,7 @@ RenderLootAttributions = function()
 		if InTenebris.wishlistData and InTenebris.wishlistData.attributions then
 			for itemID, attributions in pairs(InTenebris.wishlistData.attributions) do
 				for _, attr in ipairs(attributions) do
-					local player = attr.player
+					local player = InTenebris.Utils.String.trim(attr.player)
 					if not playerItems[player] then
 						playerItems[player] = {}
 						table.insert(playerList, player)
