@@ -353,11 +353,44 @@ function InTenebris:HookTooltips()
 		InTenebris:SecureHook(GameTooltip, name, f)
 	end
 
-	InTenebris:SecureHook(ItemRefTooltip, "SetHyperlink", function(self, itemLink)
-		local itemID = ExtractItemID(itemLink)
-		if itemID then
-			AddInTenebrisDataToTooltip(ItemRefTooltip, itemID)
+	-- Hook SetItemRef for ItemRefTooltip with toggle detection.
+	-- Atlas-TW replaces SetItemRef globally and always calls ExtendTooltip
+	-- even on toggle-off, which re-shows the tooltip. We detect this by
+	-- tracking the last shown item and force-hiding on same-item re-click.
+	local lastItemRefItemID = nil
+
+	InTenebris:SecureHook("SetItemRef", function(link)
+		if IsShiftKeyDown() or IsControlKeyDown() then
+			return
 		end
+
+		local itemID = ExtractItemID(link)
+		if not itemID then
+			return
+		end
+
+		-- Hide stale secondary tooltip
+		local parentName = ItemRefTooltip:GetName()
+		if secondaryTooltips[parentName] then
+			secondaryTooltips[parentName]:Hide()
+		end
+
+		-- Tooltip was hidden by the original (normal toggle-off, no Atlas-TW)
+		if not ItemRefTooltip:IsShown() then
+			lastItemRefItemID = nil
+			return
+		end
+
+		-- Tooltip is visible but same item was re-clicked (Atlas-TW re-showed it)
+		if lastItemRefItemID == itemID then
+			ItemRefTooltip:Hide()
+			lastItemRefItemID = nil
+			return
+		end
+
+		-- New item or first show
+		lastItemRefItemID = itemID
+		AddInTenebrisDataToTooltip(ItemRefTooltip, itemID)
 	end)
 
 	-- Hook AtlasLootTooltip
