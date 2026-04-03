@@ -318,12 +318,13 @@ local ATTRIB_OPTIONS = {
 
 local function ShowAttributionsDropdown_Initialize()
 	for _, option in ipairs(ATTRIB_OPTIONS) do
+		local optionValue = option.value
 		local info = {}
 		info.text = option.text
-		info.value = option.value
+		info.value = optionValue
 		info.func = function()
-			InTenebris.db.profile.showAttributions = option.value
-			UIDropDownMenu_SetSelectedValue(dropdown, option.value)
+			InTenebris.db.profile.showAttributions = optionValue
+			UIDropDownMenu_SetSelectedValue(dropdown, optionValue)
 		end
 		info.checked = nil
 		UIDropDownMenu_AddButton(info)
