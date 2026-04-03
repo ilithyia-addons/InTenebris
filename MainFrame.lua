@@ -264,9 +264,9 @@ lootPlaceholder:SetText("|cff666666Coming soon.|r")
 
 local strategiesTab = InTenebris:RegisterTab("strategies", "Strategies", 2)
 
--- Image dimensions (fill content width, 16:9 aspect ratio)
+-- Image dimensions (fill content width, 2:1 aspect ratio matching 1024x512 textures)
 local STRATEGY_IMAGE_WIDTH = FRAME_WIDTH - SIDE_PANEL_WIDTH - 84
-local STRATEGY_IMAGE_HEIGHT = math.floor(STRATEGY_IMAGE_WIDTH * 9 / 16)
+local STRATEGY_IMAGE_HEIGHT = math.floor(STRATEGY_IMAGE_WIDTH / 2)
 
 -- Strategy data per raid
 local RAID_STRATEGIES = {
