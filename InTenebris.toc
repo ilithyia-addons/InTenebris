@@ -12,3 +12,5 @@ Libs\AceEvent-2.0\AceEvent-2.0.lua
 
 InTenebris.lua
 WishlistData.lua
+MainFrame.lua
+MinimapButton.lua
