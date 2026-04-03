@@ -7,6 +7,7 @@ InTenebris:RegisterDefaults("char", {
 })
 InTenebris:RegisterDefaults("profile", {
 	showAttributions = "group", -- "group" = when in party/raid, "always" = always
+	showOutOfGroup = "no", -- "yes" = show players not in your group, "no" = only group members
 })
 
 -- Class colors for tooltip display
@@ -218,6 +219,9 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 	local itemAttributions = attributionLookup[itemID]
 	local shiftKeyPressed = IsShiftKeyDown()
 	local alwaysShow = InTenebris.db.profile.showAttributions == "always"
+	local inGroup = GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0
+	local showOutOfGroup = InTenebris.db.profile.showOutOfGroup == "yes"
+	local showAllPlayers = alwaysShow or shiftKeyPressed or (inGroup and showOutOfGroup)
 	local headerAdded = false
 
 	-- If no data, don't add anything
@@ -248,7 +252,7 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 			end
 		end
 
-		local attributionsToShow = (alwaysShow or shiftKeyPressed) and allAttributions or raidAttributions
+		local attributionsToShow = showAllPlayers and allAttributions or raidAttributions
 		if table.getn(attributionsToShow) > 0 then
 			if headerAdded == false then
 				AddHeaderToTooltip(frame)
@@ -281,7 +285,7 @@ local function AddInTenebrisDataToTooltip(frame, itemID)
 			end
 		end
 
-		local wishlisters = (alwaysShow or shiftKeyPressed) and allWishlisters or raidWishlisters
+		local wishlisters = showAllPlayers and allWishlisters or raidWishlisters
 		if table.getn(wishlisters) > 0 then
 			if headerAdded == false then
 				AddHeaderToTooltip(frame)

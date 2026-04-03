@@ -301,15 +301,17 @@ tooltipSectionSep:SetPoint("TOPLEFT", tooltipSectionHeader, "BOTTOMLEFT", 0, -4)
 tooltipSectionSep:SetPoint("RIGHT", optionsContent, "RIGHT", -4, 0)
 tooltipSectionSep:SetTexture(0.6, 0.5, 0.15, 0.4)
 
--- "Show loot attributions:" label
+-- Forward declarations for cross-referencing between dropdowns
+local attribDropdown, outOfGroupDropdown
+local UpdateOutOfGroupDropdownState
+
+-- "Show loot attributions:" label + dropdown
 local showAttribLabel = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 showAttribLabel:SetPoint("TOPLEFT", tooltipSectionSep, "BOTTOMLEFT", 0, -12)
 showAttribLabel:SetText("Show loot attributions:")
 
--- Dropdown for attribution display mode
-local dropdownName = "InTenebrisShowAttributionsDropdown"
-local dropdown = CreateFrame("Frame", dropdownName, optionsContent, "UIDropDownMenuTemplate")
-dropdown:SetPoint("LEFT", showAttribLabel, "RIGHT", -8, -2)
+attribDropdown = CreateFrame("Frame", "InTenebrisShowAttributionsDropdown", optionsContent, "UIDropDownMenuTemplate")
+attribDropdown:SetPoint("LEFT", showAttribLabel, "RIGHT", -8, -2)
 
 local ATTRIB_OPTIONS = {
 	{ text = "When in a party or raid", value = "group" },
@@ -319,33 +321,90 @@ local ATTRIB_OPTIONS = {
 local function ShowAttributionsDropdown_Initialize()
 	for _, option in ipairs(ATTRIB_OPTIONS) do
 		local optionValue = option.value
+		local optionText = option.text
 		local info = {}
-		info.text = option.text
+		info.text = optionText
 		info.value = optionValue
 		info.func = function()
 			InTenebris.db.profile.showAttributions = optionValue
-			UIDropDownMenu_SetSelectedValue(dropdown, optionValue)
+			UIDropDownMenu_SetSelectedValue(attribDropdown, optionValue)
+			UpdateOutOfGroupDropdownState()
 		end
 		info.checked = nil
 		UIDropDownMenu_AddButton(info)
 	end
 end
 
-UIDropDownMenu_Initialize(dropdown, ShowAttributionsDropdown_Initialize)
-UIDropDownMenu_SetWidth(180, dropdown)
+UIDropDownMenu_Initialize(attribDropdown, ShowAttributionsDropdown_Initialize)
+UIDropDownMenu_SetWidth(180, attribDropdown)
 
--- Set initial value from saved profile on show
+-- "Show characters out of group/raid:" label + dropdown
+local outOfGroupLabel = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+outOfGroupLabel:SetPoint("TOPLEFT", showAttribLabel, "BOTTOMLEFT", 0, -16)
+outOfGroupLabel:SetText("Show characters out of group/raid:")
+
+outOfGroupDropdown = CreateFrame("Frame", "InTenebrisShowOutOfGroupDropdown", optionsContent, "UIDropDownMenuTemplate")
+outOfGroupDropdown:SetPoint("LEFT", outOfGroupLabel, "RIGHT", -8, -2)
+
+local OUT_OF_GROUP_OPTIONS = {
+	{ text = "No", value = "no" },
+	{ text = "Yes", value = "yes" },
+}
+
+local function ShowOutOfGroupDropdown_Initialize()
+	for _, option in ipairs(OUT_OF_GROUP_OPTIONS) do
+		local optionValue = option.value
+		local optionText = option.text
+		local info = {}
+		info.text = optionText
+		info.value = optionValue
+		info.func = function()
+			InTenebris.db.profile.showOutOfGroup = optionValue
+			UIDropDownMenu_SetSelectedValue(outOfGroupDropdown, optionValue)
+		end
+		info.checked = nil
+		UIDropDownMenu_AddButton(info)
+	end
+end
+
+UIDropDownMenu_Initialize(outOfGroupDropdown, ShowOutOfGroupDropdown_Initialize)
+UIDropDownMenu_SetWidth(80, outOfGroupDropdown)
+
+-- Sync the out-of-group dropdown state based on the attributions setting
+UpdateOutOfGroupDropdownState = function()
+	local isAlways = InTenebris.db.profile.showAttributions == "always"
+	if isAlways then
+		UIDropDownMenu_SetSelectedValue(outOfGroupDropdown, "yes")
+		UIDropDownMenu_SetText("Yes", outOfGroupDropdown)
+		UIDropDownMenu_DisableDropDown(outOfGroupDropdown)
+	else
+		local currentValue = InTenebris.db.profile.showOutOfGroup
+		UIDropDownMenu_SetSelectedValue(outOfGroupDropdown, currentValue)
+		for _, option in ipairs(OUT_OF_GROUP_OPTIONS) do
+			if option.value == currentValue then
+				UIDropDownMenu_SetText(option.text, outOfGroupDropdown)
+				break
+			end
+		end
+		UIDropDownMenu_EnableDropDown(outOfGroupDropdown)
+	end
+end
+
+-- Set initial values from saved profile on show
 local originalOnShow = optionsTab:GetScript("OnShow")
 optionsTab:SetScript("OnShow", function()
 	if originalOnShow then
 		originalOnShow()
 	end
-	local currentValue = InTenebris.db.profile.showAttributions
-	UIDropDownMenu_SetSelectedValue(dropdown, currentValue)
+	-- Update attributions dropdown
+	local attribValue = InTenebris.db.profile.showAttributions
+	UIDropDownMenu_SetSelectedValue(attribDropdown, attribValue)
 	for _, option in ipairs(ATTRIB_OPTIONS) do
-		if option.value == currentValue then
-			UIDropDownMenu_SetText(option.text, dropdown)
+		if option.value == attribValue then
+			UIDropDownMenu_SetText(option.text, attribDropdown)
 			break
 		end
 	end
+	-- Update out-of-group dropdown (handles disable state)
+	UpdateOutOfGroupDropdownState()
 end)
