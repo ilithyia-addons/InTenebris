@@ -70,9 +70,7 @@ end)
 button:SetScript("OnDragStop", function()
 	isMinimapButtonDragging = false
 	-- Save angle to character DB
-	if InTenebris.db and InTenebris.db.char then
-		InTenebris.db.char.minimapAngle = minimapButtonAngle
-	end
+	InTenebris.db.char.minimapAngle = minimapButtonAngle
 end)
 
 button:SetScript("OnUpdate", function()
@@ -90,9 +88,7 @@ end)
 
 -- Load saved position from AceDB (called from OnInitialize)
 function InTenebris:LoadMinimapButtonPosition()
-	if self.db and self.db.char and self.db.char.minimapAngle then
-		minimapButtonAngle = self.db.char.minimapAngle
-	end
+	minimapButtonAngle = self.db.char.minimapAngle
 	UpdateMinimapButtonPosition()
 end
 

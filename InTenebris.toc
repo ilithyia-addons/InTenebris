@@ -4,6 +4,7 @@
 ## Author: Ilithyia
 ## Version: 1.0.0
 ## SavedVariables: InTenebrisDB
+## SavedVariablesPerCharacter: InTenebrisCharDB
 
 Libs\AceLibrary\AceLibrary.lua
 Libs\AceOO-2.0\AceOO-2.0.lua

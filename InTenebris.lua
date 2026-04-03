@@ -120,7 +120,10 @@ end
 
 function InTenebris:OnInitialize()
 	-- Register saved variables database
-	self:RegisterDB("InTenebrisDB")
+	self:RegisterDB("InTenebrisDB", "InTenebrisCharDB")
+	self:RegisterDefaults("char", {
+		minimapAngle = 220,
+	})
 
 	-- Load wishlist data from WishlistData.lua (assigned to InTenebris.wishlistData)
 	wishlistData = self.wishlistData or {
