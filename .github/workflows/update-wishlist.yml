@@ -1,0 +1,78 @@
+name: Update Wishlist Data
+
+on:
+  schedule:
+    # 6am, 12pm, 6pm Europe/Paris (CET=UTC+1, CEST=UTC+2)
+    # Using CET offsets: 5:00, 11:00, 17:00 UTC
+    # During summer (CEST) these fire at 7am, 1pm, 7pm Paris time
+    - cron: "0 5,11,17 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update-wishlist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch wishlist data from Google Sheets
+        run: |
+          SHEET_ID="1lZxbKGpiMqlELepgFe2_zuGXEmpDvTw225I58M92CkY"
+          URL="https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=ADDON&range=A1"
+          curl -sfL "$URL" -o raw_data.csv
+
+          # CSV wraps cell in quotes and doubles internal quotes — undo that
+          python3 -c "
+          import csv, sys
+          with open('raw_data.csv', 'r') as f:
+              reader = csv.reader(f)
+              for row in reader:
+                  if row:
+                      sys.stdout.write(row[0])
+                      break
+          " > wishlist_content.txt
+
+      - name: Update WishlistData.lua
+        run: |
+          python3 << 'PYEOF'
+          import re
+
+          with open('wishlist_content.txt', 'r') as f:
+              new_data = f.read().strip()
+
+          if not new_data.startswith('InTenebris.wishlistData'):
+              raise ValueError("Fetched data doesn't look like valid wishlist data")
+
+          with open('WishlistData.lua', 'r') as f:
+              content = f.read()
+
+          pattern = r'(-- WISHLIST_DATA_START\n).*?\n(-- WISHLIST_DATA_END)'
+          replacement = r'\1' + new_data.replace('\\', r'\\') + r'\n\2'
+          new_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+
+          with open('WishlistData.lua', 'w') as f:
+              f.write(new_content)
+          PYEOF
+
+      - name: Run StyLua
+        run: |
+          curl -sL "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.3.0/stylua-linux-x86_64.zip" -o stylua.zip
+          unzip -o stylua.zip stylua
+          chmod +x stylua
+          ./stylua WishlistData.lua
+
+      - name: Verify Lua syntax
+        run: |
+          sudo apt-get install -qq -y lua5.1 > /dev/null 2>&1
+          luac5.1 -p WishlistData.lua
+
+      - name: Commit and push if changed
+        run: |
+          git diff --quiet WishlistData.lua && echo "No changes detected" && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add WishlistData.lua
+          git commit -m "Update wishlist data from spreadsheet"
+          git push
