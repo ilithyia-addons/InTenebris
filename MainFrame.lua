@@ -286,18 +286,27 @@ scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
 -- Item info cache: [itemID] = { name = "raw", colored = "|c...|r", quality = N }
 local itemInfoCache = {}
+-- Items that exhausted all cache attempts — never retry these
+local itemCacheBlacklist = {}
 
-local function CacheItemInfo(itemID)
+local CACHE_MAX_ATTEMPTS = 3
+local CACHE_RETRY_DELAY = 1 -- seconds between retries per item
+local CACHE_BATCH_SIZE = 3
+local CACHE_BATCH_DELAY = 0.1 -- seconds between batches
+
+local function MakePlaceholder(itemID)
+	return {
+		name = "Item #" .. itemID,
+		colored = "|cff999999Item #" .. itemID .. "|r",
+		quality = 0,
+	}
+end
+
+local function GetCachedItemInfo(itemID)
 	if itemInfoCache[itemID] then
 		return itemInfoCache[itemID]
 	end
 	local name, _, quality = GetItemInfo(itemID)
-	if not name then
-		scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-		scanTooltip:SetHyperlink("item:" .. itemID .. ":0:0:0")
-		scanTooltip:Hide()
-		name, _, quality = GetItemInfo(itemID)
-	end
 	if name then
 		local colorCode = QUALITY_COLORS[quality] or "ffffffff"
 		itemInfoCache[itemID] = {
@@ -305,14 +314,77 @@ local function CacheItemInfo(itemID)
 			colored = "|c" .. colorCode .. name .. "|r",
 			quality = quality or 1,
 		}
-	else
-		itemInfoCache[itemID] = {
-			name = "Item #" .. itemID,
-			colored = "|cff999999Item #" .. itemID .. "|r",
-			quality = 0,
-		}
+		return itemInfoCache[itemID]
 	end
-	return itemInfoCache[itemID]
+	return MakePlaceholder(itemID)
+end
+
+-- Force a single item into the client cache with retries.
+-- Calls callback(true) on success, callback(false) when attempts are exhausted.
+local function ForceCacheItem(itemID, attemptsLeft, callback)
+	if GetItemInfo(itemID) then
+		GetCachedItemInfo(itemID)
+		callback(true)
+		return
+	end
+	if attemptsLeft <= 0 then
+		itemCacheBlacklist[itemID] = true
+		itemInfoCache[itemID] = MakePlaceholder(itemID)
+		callback(false)
+		return
+	end
+	scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+	scanTooltip:SetHyperlink("item:" .. itemID .. ":0:0:0")
+	scanTooltip:Hide()
+	InTenebris:ScheduleEvent(function()
+		ForceCacheItem(itemID, attemptsLeft - 1, callback)
+	end, CACHE_RETRY_DELAY)
+end
+
+-- Batch-cache a list of item IDs, then call onComplete once all are resolved (or gave up).
+-- onComplete is NOT called if everything is already cached.
+local function CacheAllItems(itemIDs, onComplete)
+	local uncachedList = {}
+	local seen = {}
+	for i = 1, table.getn(itemIDs) do
+		local id = itemIDs[i]
+		if not seen[id] and not itemInfoCache[id] and not itemCacheBlacklist[id] and not GetItemInfo(id) then
+			seen[id] = true
+			table.insert(uncachedList, id)
+		end
+	end
+
+	if table.getn(uncachedList) == 0 then
+		return
+	end
+
+	local pending = table.getn(uncachedList)
+	local function onItemDone()
+		pending = pending - 1
+		if pending <= 0 then
+			onComplete()
+		end
+	end
+
+	local totalItems = table.getn(uncachedList)
+	local batchStart = 1
+
+	local function processBatch()
+		local batchEnd = batchStart + CACHE_BATCH_SIZE - 1
+		if batchEnd > totalItems then
+			batchEnd = totalItems
+		end
+		for i = batchStart, batchEnd do
+			local id = uncachedList[i]
+			ForceCacheItem(id, CACHE_MAX_ATTEMPTS, onItemDone)
+		end
+		batchStart = batchEnd + 1
+		if batchStart <= totalItems then
+			InTenebris:ScheduleEvent(processBatch, CACHE_BATCH_DELAY)
+		end
+	end
+
+	processBatch()
 end
 
 -- View state
@@ -476,6 +548,7 @@ end
 
 -- Forward declaration
 local RenderLootAttributions
+local cacheWarmStarted = false
 
 -- Render the loot attributions list
 RenderLootAttributions = function()
@@ -490,7 +563,7 @@ RenderLootAttributions = function()
 		local items = {}
 		if InTenebris.wishlistData and InTenebris.wishlistData.attributions then
 			for itemID, attributions in pairs(InTenebris.wishlistData.attributions) do
-				local info = CacheItemInfo(itemID)
+				local info = GetCachedItemInfo(itemID)
 				table.insert(items, {
 					itemID = itemID,
 					info = info,
@@ -582,7 +655,7 @@ RenderLootAttributions = function()
 				matchesSearch = string.find(string.lower(player), searchLower, 1, true)
 				if not matchesSearch then
 					for _, item in ipairs(items) do
-						local info = CacheItemInfo(item.itemID)
+						local info = GetCachedItemInfo(item.itemID)
 						if string.find(string.lower(info.name), searchLower, 1, true) then
 							matchesSearch = true
 							break
@@ -600,7 +673,7 @@ RenderLootAttributions = function()
 
 				-- Item entries (clickable)
 				for _, item in ipairs(items) do
-					local info = CacheItemInfo(item.itemID)
+					local info = GetCachedItemInfo(item.itemID)
 					local entry = AcquireItemButton(item.itemID, GameFontNormalSmall)
 					entry:SetPoint("TOPLEFT", lootScrollChild, "TOPLEFT", 16, -yOffset)
 					entry.label:SetText("Rank " .. item.rank .. ": " .. info.colored)
@@ -625,6 +698,19 @@ RenderLootAttributions = function()
 	lootScroll:SetVerticalScroll(0)
 
 	UpdateViewToggleAppearance()
+
+	-- On first render, kick off cache warming for all attribution items.
+	-- CacheAllItems is a no-op if everything is already cached.
+	if not cacheWarmStarted and InTenebris.wishlistData and InTenebris.wishlistData.attributions then
+		cacheWarmStarted = true
+		local allIDs = {}
+		for itemID in pairs(InTenebris.wishlistData.attributions) do
+			table.insert(allIDs, itemID)
+		end
+		CacheAllItems(allIDs, function()
+			RenderLootAttributions()
+		end)
+	end
 end
 
 -- Wire up view toggle buttons
