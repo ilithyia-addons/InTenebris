@@ -63,14 +63,16 @@ function InTenebris:BuildLookupTables()
 	if wishlistData.wishlist then
 		for playerName, items in pairs(wishlistData.wishlist) do
 			playerName = InTenebris.Utils.String.trim(playerName)
-			local playerLower = string.lower(playerName)
-			nameCaseMap[playerLower] = playerName -- Map lowercase to original case
+			if playerName ~= "" then
+				local playerLower = string.lower(playerName)
+				nameCaseMap[playerLower] = playerName -- Map lowercase to original case
 
-			for _, itemID in ipairs(items) do
-				if not wishlistLookup[itemID] then
-					wishlistLookup[itemID] = {}
+				for _, itemID in ipairs(items) do
+					if not wishlistLookup[itemID] then
+						wishlistLookup[itemID] = {}
+					end
+					table.insert(wishlistLookup[itemID], playerLower)
 				end
-				table.insert(wishlistLookup[itemID], playerLower)
 			end
 		end
 	end
@@ -83,12 +85,14 @@ function InTenebris:BuildLookupTables()
 			end
 			for _, attribution in ipairs(attributions) do
 				local playerTrimmed = InTenebris.Utils.String.trim(attribution.player)
-				local playerLower = string.lower(playerTrimmed)
-				nameCaseMap[playerLower] = playerTrimmed -- Map lowercase to original case
-				table.insert(attributionLookup[itemID], {
-					rank = attribution.rank,
-					playerLower = playerLower,
-				})
+				if playerTrimmed ~= "" then
+					local playerLower = string.lower(playerTrimmed)
+					nameCaseMap[playerLower] = playerTrimmed -- Map lowercase to original case
+					table.insert(attributionLookup[itemID], {
+						rank = attribution.rank,
+						playerLower = playerLower,
+					})
+				end
 			end
 		end
 	end
