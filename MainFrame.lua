@@ -754,7 +754,7 @@ end)
 -- Strategies tab
 -- ============================================================
 
-local strategiesTab = InTenebris:RegisterTab("strategies", "Strategies", 2)
+local strategiesTab = InTenebris:RegisterTab("strategies", "Strategies", 3)
 
 -- Image dimensions (fill content width, 2:1 aspect ratio matching 1024x512 textures)
 local STRATEGY_IMAGE_WIDTH = FRAME_WIDTH - SIDE_PANEL_WIDTH - 84
@@ -905,13 +905,13 @@ UIDropDownMenu_SetText(RAID_STRATEGIES[1].name, raidDropdown)
 SelectRaid(RAID_STRATEGIES[1].id)
 
 -- Crafting tab (placeholder)
-local craftingTab = InTenebris:RegisterTab("crafting", "Crafting", 3)
+local craftingTab = InTenebris:RegisterTab("crafting", "Crafting", 4)
 local craftingPlaceholder = craftingTab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 craftingPlaceholder:SetPoint("CENTER", craftingTab, "CENTER", 0, 0)
 craftingPlaceholder:SetText("|cff666666Coming soon.|r")
 
 -- Options tab
-local optionsTab = InTenebris:RegisterTab("options", "Options", 4)
+local optionsTab = InTenebris:RegisterTab("options", "Options", 5)
 
 -- Scroll frame for options content
 local optionsScroll = CreateFrame("ScrollFrame", "InTenebrisOptionsScroll", optionsTab, "UIPanelScrollFrameTemplate")
