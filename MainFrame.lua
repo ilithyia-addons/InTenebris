@@ -1091,6 +1091,13 @@ local minQualityLabel, minQualityDropdown
 local maxEntriesLabel, maxEntriesDropdown
 local UpdateLootLogDropdownStates
 
+local QUALITY_OPTIONS = {
+	{ text = "|cff1eff00Uncommon|r", value = 2 },
+	{ text = "|cff0070ddRare|r", value = 3 },
+	{ text = "|cffa335eeEpic|r", value = 4 },
+	{ text = "|cffff8000Legendary|r", value = 5 },
+}
+
 -- We defer creation until OnShow so InTenebris.hasNampower is set
 local lootLogOptionsCreated = false
 
@@ -1153,13 +1160,6 @@ local function CreateLootLogOptions()
 
 	minQualityDropdown = CreateFrame("Frame", "InTenebrisMinQualityDropdown", optionsContent, "UIDropDownMenuTemplate")
 	minQualityDropdown:SetPoint("LEFT", minQualityLabel, "RIGHT", -8, -2)
-
-	local QUALITY_OPTIONS = {
-		{ text = "|cff1eff00Uncommon|r", value = 2 },
-		{ text = "|cff0070ddRare|r", value = 3 },
-		{ text = "|cffa335eeEpic|r", value = 4 },
-		{ text = "|cffff8000Legendary|r", value = 5 },
-	}
 
 	local function MinQualityDropdown_Initialize()
 		for _, option in ipairs(QUALITY_OPTIONS) do
@@ -1269,13 +1269,12 @@ optionsTab:SetScript("OnShow", function()
 		-- Sync quality dropdown
 		local qualityValue = InTenebris.db.profile.lootLogMinQuality
 		UIDropDownMenu_SetSelectedValue(minQualityDropdown, qualityValue)
-		local QUALITY_DISPLAY = {
-			[2] = "|cff1eff00Uncommon|r",
-			[3] = "|cff0070ddRare|r",
-			[4] = "|cffa335eeEpic|r",
-			[5] = "|cffff8000Legendary|r",
-		}
-		UIDropDownMenu_SetText(QUALITY_DISPLAY[qualityValue] or "Epic", minQualityDropdown)
+		for _, option in ipairs(QUALITY_OPTIONS) do
+			if option.value == qualityValue then
+				UIDropDownMenu_SetText(option.text, minQualityDropdown)
+				break
+			end
+		end
 
 		-- Sync max entries dropdown
 		local maxValue = InTenebris.db.profile.lootLogMaxEntries

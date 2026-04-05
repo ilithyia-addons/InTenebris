@@ -49,12 +49,12 @@ function InTenebris:LoadLootLog()
 	self.lootLogWriteError = false
 	self.lootLogCorruptError = false
 
-	if not CustomFileExists(LOOT_LOG_FILENAME) then
-		return
-	end
-
 	local ok, err = pcall(ExecuteCustomLuaFile, LOOT_LOG_FILENAME)
 	if not ok then
+		-- File doesn't exist or is corrupt
+		if not CustomFileExists(LOOT_LOG_FILENAME) then
+			return
+		end
 		PrintError("Loot log file was corrupt and has been reset. Data was lost.")
 		self.lootLogCorruptError = true
 		self.lootLog = {}
@@ -75,8 +75,10 @@ end
 function InTenebris:SaveLootLog()
 	local maxEntries = self.db.profile.lootLogMaxEntries
 	-- Trim oldest entries if over the limit
-	while table.getn(self.lootLog) > maxEntries do
-		table.remove(self.lootLog, table.getn(self.lootLog))
+	local len = table.getn(self.lootLog)
+	while len > maxEntries do
+		table.remove(self.lootLog)
+		len = len - 1
 	end
 
 	local serialized = SerializeLootLog(self.lootLog)
