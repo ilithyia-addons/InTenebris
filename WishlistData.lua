@@ -16,7 +16,7 @@
 
 -- WISHLIST_DATA_START
 InTenebris.wishlistData = {
-	generatedDate = "2026-04-04",
+	generatedDate = "2026-04-05",
 	wishlist = {
 		["MWC"] = { 17204, 17104 },
 		["CYNDA"] = { 18820, 18842, 16900 },
@@ -136,9 +136,8 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "RAND" },
 		},
 		[19374] = {
-			{ rank = 1, player = "SELVIA" },
-			{ rank = 2, player = "HEYLARI" },
-			{ rank = 3, player = "LEHOOF" },
+			{ rank = 1, player = "HEYLARI" },
+			{ rank = 2, player = "LEHOOF" },
 		},
 		[16898] = {
 			{ rank = 1, player = "MIQUETAMERE" },
@@ -218,9 +217,7 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "MCKEE" },
 		},
 		[16948] = {
-			{ rank = 1, player = "POKPOK" },
-			{ rank = 2, player = "PEDRO" },
-			{ rank = 3, player = "MUNDUK" },
+			{ rank = 1, player = "MUNDUK" },
 		},
 		[16956] = {
 			{ rank = 1, player = "KARANIR" },
@@ -266,8 +263,7 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "RAND" },
 		},
 		[19406] = {
-			{ rank = 1, player = "NAHEUL" },
-			{ rank = 2, player = "HODVIDAR" },
+			{ rank = 1, player = "HODVIDAR" },
 		},
 		[19407] = {
 			{ rank = 1, player = "CERNED" },
@@ -291,9 +287,7 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "MCKEE" },
 		},
 		[16948] = {
-			{ rank = 1, player = "POKPOK" },
-			{ rank = 2, player = "PEDRO" },
-			{ rank = 3, player = "MUNDUK" },
+			{ rank = 1, player = "MUNDUK" },
 		},
 		[16956] = {
 			{ rank = 1, player = "KARANIR" },
@@ -477,8 +471,7 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "DARNOM" },
 		},
 		[19375] = {
-			{ rank = 1, player = "SOUFFRANCE" },
-			{ rank = 2, player = "HEYLARI" },
+			{ rank = 1, player = "HEYLARI" },
 		},
 		[19376] = {
 			{ rank = 1, player = "RAND" },
@@ -534,9 +527,8 @@ InTenebris.wishlistData = {
 			{ rank = 3, player = "LEHOOF" },
 		},
 		[16958] = {
-			{ rank = 1, player = "DOUWI" },
-			{ rank = 2, player = "KALEN" },
-			{ rank = 3, player = "DEASP" },
+			{ rank = 1, player = "KALEN" },
+			{ rank = 2, player = "DEASP" },
 		},
 		[16966] = {
 			{ rank = 1, player = "JEANAIMARRE" },
@@ -553,8 +545,7 @@ InTenebris.wishlistData = {
 			{ rank = 3, player = "MCKEE" },
 		},
 		[19356] = {
-			{ rank = 1, player = "SOUFFRANCE" },
-			{ rank = 2, player = "SEVILLIA" },
+			{ rank = 1, player = "SEVILLIA" },
 		},
 		[19364] = {
 			{ rank = 1, player = "MWC" },
@@ -568,8 +559,7 @@ InTenebris.wishlistData = {
 		},
 		[19437] = {
 			{ rank = 1, player = "CAILLOU" },
-			{ rank = 2, player = "DEASP" },
-			{ rank = 3, player = "CARADECONA" },
+			{ rank = 2, player = "CARADECONA" },
 		},
 		[19354] = {
 			{ rank = 1, player = "RAND" },
@@ -620,8 +610,7 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "ILLYTHIA" },
 		},
 		[33074] = {
-			{ rank = 1, player = "DAZAA" },
-			{ rank = 2, player = "WORLDE" },
+			{ rank = 1, player = "WORLDE" },
 		},
 		[33081] = {
 			{ rank = 1, player = "DAZAA" },
