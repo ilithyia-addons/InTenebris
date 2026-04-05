@@ -9,6 +9,9 @@ InTenebris:RegisterDefaults("profile", {
 	showAttributions = "group", -- "group" = when in party/raid, "always" = always
 	showOutOfGroup = "no", -- "yes" = show players not in your group, "no" = only group members
 	hookItemRefTooltip = "yes", -- "yes" = show data on item links in chat, "no" = don't
+	lootLogEnabled = true, -- global toggle for loot logging
+	lootLogMinQuality = 4, -- minimum item quality to log (4 = Epic)
+	lootLogMaxEntries = 200, -- maximum log entries to keep
 })
 
 -- Class colors for tooltip display
@@ -174,9 +177,22 @@ function InTenebris:OnEnable()
 	-- Hook Tooltips
 	InTenebris:HookTooltips()
 
+	-- Detect nampower file I/O availability
+	self.hasNampower = (type(WriteCustomFile) == "function")
+
+	-- Load loot log from file (if nampower available)
+	if self.hasNampower then
+		self:LoadLootLog()
+	end
+
 	-- Register events to update raid roster cache
 	self:RegisterEvent("RAID_ROSTER_UPDATE", "UpdateRaidRosterCache")
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "UpdateRaidRosterCache")
+
+	-- Register loot event (handler will early-return if conditions not met)
+	if self.hasNampower then
+		self:RegisterEvent("CHAT_MSG_LOOT", "OnLootMessage")
+	end
 end
 
 -- Get player class by name from cache
