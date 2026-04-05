@@ -16,4 +16,5 @@ Libs\AceDB-2.0\AceDB-2.0.lua
 InTenebris.lua
 WishlistData.lua
 MainFrame.lua
+LootLog.lua
 MinimapButton.lua
