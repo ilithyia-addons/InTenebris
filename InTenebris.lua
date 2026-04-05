@@ -8,6 +8,7 @@ InTenebris:RegisterDefaults("char", {
 InTenebris:RegisterDefaults("profile", {
 	showAttributions = "group", -- "group" = when in party/raid, "always" = always
 	showOutOfGroup = "no", -- "yes" = show players not in your group, "no" = only group members
+	hookItemRefTooltip = "yes", -- "yes" = show data on item links in chat, "no" = don't
 })
 
 -- Class colors for tooltip display
@@ -361,9 +362,29 @@ function InTenebris:HookTooltips()
 	-- Atlas-TW replaces SetItemRef globally and always calls ExtendTooltip
 	-- even on toggle-off, which re-shows the tooltip. We detect this by
 	-- tracking the last shown item and force-hiding on same-item re-click.
-	local lastItemRefItemID = nil
+	if InTenebris.db.profile.hookItemRefTooltip == "yes" then
+		self:HookItemRefTooltip()
+	end
 
-	InTenebris:SecureHook("SetItemRef", function(link)
+	-- Hook AtlasLootTooltip
+	if IsAddOnLoaded("AtlasLoot") then
+		InTenebris:SecureHook(AtlasLootTooltip, "SetHyperlink", function(self, itemLink)
+			local itemID = ExtractItemID(itemLink)
+			if itemID then
+				AddInTenebrisDataToTooltip(AtlasLootTooltip, itemID)
+			end
+		end)
+	end
+end
+
+local lastItemRefItemID = nil
+
+function InTenebris:HookItemRefTooltip()
+	if self:IsHooked("SetItemRef") then
+		return
+	end
+	lastItemRefItemID = nil
+	self:SecureHook("SetItemRef", function(link)
 		if IsShiftKeyDown() or IsControlKeyDown() then
 			return
 		end
@@ -396,15 +417,12 @@ function InTenebris:HookTooltips()
 		lastItemRefItemID = itemID
 		AddInTenebrisDataToTooltip(ItemRefTooltip, itemID)
 	end)
+end
 
-	-- Hook AtlasLootTooltip
-	if IsAddOnLoaded("AtlasLoot") then
-		InTenebris:SecureHook(AtlasLootTooltip, "SetHyperlink", function(self, itemLink)
-			local itemID = ExtractItemID(itemLink)
-			if itemID then
-				AddInTenebrisDataToTooltip(AtlasLootTooltip, itemID)
-			end
-		end)
+function InTenebris:UnhookItemRefTooltip()
+	if self:IsHooked("SetItemRef") then
+		self:Unhook("SetItemRef")
+		lastItemRefItemID = nil
 	end
 end
 

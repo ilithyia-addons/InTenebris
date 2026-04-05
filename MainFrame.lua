@@ -1050,6 +1050,44 @@ UpdateOutOfGroupDropdownState = function()
 	end
 end
 
+-- "Show data on item links in chat:" label + dropdown
+local hookItemRefLabel = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+hookItemRefLabel:SetPoint("TOPLEFT", outOfGroupLabel, "BOTTOMLEFT", 0, -16)
+hookItemRefLabel:SetText("Show data on item links in chat:")
+
+local hookItemRefDropdown =
+	CreateFrame("Frame", "InTenebrisHookItemRefDropdown", optionsContent, "UIDropDownMenuTemplate")
+hookItemRefDropdown:SetPoint("LEFT", hookItemRefLabel, "RIGHT", -8, -2)
+
+local HOOK_ITEM_REF_OPTIONS = {
+	{ text = "No", value = "no" },
+	{ text = "Yes", value = "yes" },
+}
+
+local function HookItemRefDropdown_Initialize()
+	for _, option in ipairs(HOOK_ITEM_REF_OPTIONS) do
+		local optionValue = option.value
+		local optionText = option.text
+		local info = {}
+		info.text = optionText
+		info.value = optionValue
+		info.func = function()
+			InTenebris.db.profile.hookItemRefTooltip = optionValue
+			UIDropDownMenu_SetSelectedValue(hookItemRefDropdown, optionValue)
+			if optionValue == "yes" then
+				InTenebris:HookItemRefTooltip()
+			else
+				InTenebris:UnhookItemRefTooltip()
+			end
+		end
+		info.checked = nil
+		UIDropDownMenu_AddButton(info)
+	end
+end
+
+UIDropDownMenu_Initialize(hookItemRefDropdown, HookItemRefDropdown_Initialize)
+UIDropDownMenu_SetWidth(80, hookItemRefDropdown)
+
 -- Set initial values from saved profile on show
 local originalOnShow = optionsTab:GetScript("OnShow")
 optionsTab:SetScript("OnShow", function()
@@ -1067,7 +1105,16 @@ optionsTab:SetScript("OnShow", function()
 	end
 	-- Update out-of-group dropdown (handles disable state)
 	UpdateOutOfGroupDropdownState()
+	-- Update item link tooltip dropdown
+	local hookItemRefValue = InTenebris.db.profile.hookItemRefTooltip
+	UIDropDownMenu_SetSelectedValue(hookItemRefDropdown, hookItemRefValue)
+	for _, option in ipairs(HOOK_ITEM_REF_OPTIONS) do
+		if option.value == hookItemRefValue then
+			UIDropDownMenu_SetText(option.text, hookItemRefDropdown)
+			break
+		end
+	end
 
 	-- Update scroll child height to fit content (expand as more options are added)
-	optionsContent:SetHeight(100)
+	optionsContent:SetHeight(130)
 end)
