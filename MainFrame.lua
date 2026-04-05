@@ -270,15 +270,7 @@ end
 
 local lootTab = InTenebris:RegisterTab("loot", "Loot Attributions", 1)
 
--- Item quality color codes
-local QUALITY_COLORS = {
-	[0] = "ff9d9d9d", -- Poor
-	[1] = "ffffffff", -- Common
-	[2] = "ff1eff00", -- Uncommon
-	[3] = "ff0070dd", -- Rare
-	[4] = "ffa335ee", -- Epic
-	[5] = "ffff8000", -- Legendary
-}
+local QUALITY_COLORS = InTenebris.QUALITY_COLORS
 
 -- Hidden tooltip for forcing item cache
 local scanTooltip = CreateFrame("GameTooltip", "InTenebrisScanTooltip", UIParent, "GameTooltipTemplate")
@@ -1295,5 +1287,5 @@ optionsTab:SetScript("OnShow", function()
 	end
 
 	-- Update scroll child height to fit content (expand as more options are added)
-	optionsContent:SetHeight(280)
+	optionsContent:SetHeight(lootLogOptionsCreated and 280 or 130)
 end)

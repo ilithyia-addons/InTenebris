@@ -36,6 +36,16 @@ local CLASS_COLORS = {
 	["DRUID"] = { r = 1.00, g = 0.49, b = 0.04 },
 }
 
+-- Item quality color codes (hex strings for |c escape sequences)
+InTenebris.QUALITY_COLORS = {
+	[0] = "ff9d9d9d", -- Poor
+	[1] = "ffffffff", -- Common
+	[2] = "ff1eff00", -- Uncommon
+	[3] = "ff0070dd", -- Rare
+	[4] = "ffa335ee", -- Epic
+	[5] = "ffff8000", -- Legendary
+}
+
 -- Utility namespaces
 InTenebris.Utils = {}
 InTenebris.Utils.String = {}

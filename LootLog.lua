@@ -139,16 +139,18 @@ function InTenebris:OnLootMessage()
 	local itemId = tonumber(itemIdStr)
 
 	-- Check item quality against threshold
-	local quality = GetItemStatsField(itemId, "quality")
+	local quality, itemName
+	if GetItemStatsField then
+		quality = GetItemStatsField(itemId, "quality")
+		itemName = GetItemStatsField(itemId, "displayName")
+	end
+	if not quality then
+		local name, _, q = GetItemInfo(itemId)
+		quality = q
+		itemName = itemName or name
+	end
 	if not quality or quality < self.db.profile.lootLogMinQuality then
 		return
-	end
-
-	-- Get item name
-	local itemName = GetItemStatsField(itemId, "displayName")
-	if not itemName then
-		-- Fallback to GetItemInfo
-		itemName = GetItemInfo(itemId)
 	end
 	if not itemName then
 		itemName = "Item #" .. itemId
@@ -182,15 +184,7 @@ end
 -- Loot Logs Tab UI
 -- ============================================================
 
--- Item quality color codes (same as MainFrame.lua)
-local QUALITY_COLORS = {
-	[0] = "ff9d9d9d", -- Poor
-	[1] = "ffffffff", -- Common
-	[2] = "ff1eff00", -- Uncommon
-	[3] = "ff0070dd", -- Rare
-	[4] = "ffa335ee", -- Epic
-	[5] = "ffff8000", -- Legendary
-}
+local QUALITY_COLORS = InTenebris.QUALITY_COLORS
 
 local lootLogTab = InTenebris:RegisterTab("lootlog", "Loot Logs", 2)
 
@@ -314,7 +308,7 @@ local function RenderLootLog()
 		return
 	end
 
-	-- State 3: Corruption error (show message, continue to empty log below)
+	-- State 3: Corruption error
 	if InTenebris.lootLogCorruptError then
 		stateMessage:SetText("|cffff3333Loot log file was corrupt and has been reset.\nAll previous data was lost.|r")
 		stateMessage:Show()
