@@ -177,3 +177,240 @@ function InTenebris:OnLootMessage()
 	-- Save to file
 	self:SaveLootLog()
 end
+
+-- ============================================================
+-- Loot Logs Tab UI
+-- ============================================================
+
+-- Item quality color codes (same as MainFrame.lua)
+local QUALITY_COLORS = {
+	[0] = "ff9d9d9d", -- Poor
+	[1] = "ffffffff", -- Common
+	[2] = "ff1eff00", -- Uncommon
+	[3] = "ff0070dd", -- Rare
+	[4] = "ffa335ee", -- Epic
+	[5] = "ffff8000", -- Legendary
+}
+
+local lootLogTab = InTenebris:RegisterTab("lootlog", "Loot Logs", 2)
+
+-- State message (centered, used for no-nampower / disabled / empty / corruption states)
+local stateMessage = lootLogTab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+stateMessage:SetPoint("CENTER", lootLogTab, "CENTER", 0, 0)
+stateMessage:SetJustifyH("CENTER")
+stateMessage:SetWidth(400)
+stateMessage:Hide()
+
+-- Write error warning banner (top of tab, non-blocking)
+local writeErrorBanner = lootLogTab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+writeErrorBanner:SetPoint("TOPLEFT", lootLogTab, "TOPLEFT", 4, 2)
+writeErrorBanner:SetTextColor(1, 0.3, 0.3, 1)
+writeErrorBanner:Hide()
+
+-- Search box
+local logSearchBox = CreateFrame("EditBox", "InTenebrisLootLogSearch", lootLogTab)
+logSearchBox:SetFontObject(GameFontNormalSmall)
+logSearchBox:SetAutoFocus(false)
+logSearchBox:SetWidth(160)
+logSearchBox:SetHeight(20)
+logSearchBox:SetPoint("TOPRIGHT", lootLogTab, "TOPRIGHT", -4, 0)
+logSearchBox:SetBackdrop({
+	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileSize = 16,
+	edgeSize = 12,
+	insets = { left = 3, right = 3, top = 3, bottom = 3 },
+})
+logSearchBox:SetBackdropColor(0.05, 0.05, 0.05, 0.9)
+logSearchBox:SetBackdropBorderColor(0.4, 0.35, 0.2, 0.6)
+logSearchBox:SetTextInsets(4, 4, 0, 0)
+logSearchBox:SetMaxLetters(50)
+
+local logSearchPlaceholder = logSearchBox:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+logSearchPlaceholder:SetPoint("LEFT", logSearchBox, "LEFT", 6, 0)
+logSearchPlaceholder:SetText("|cff666666Search...|r")
+
+logSearchBox:SetScript("OnEscapePressed", function()
+	this:ClearFocus()
+end)
+
+logSearchBox:SetScript("OnEditFocusGained", function()
+	logSearchPlaceholder:Hide()
+end)
+
+logSearchBox:SetScript("OnEditFocusLost", function()
+	if this:GetText() == "" then
+		logSearchPlaceholder:Show()
+	end
+end)
+
+-- Scroll frame
+local logScroll = CreateFrame("ScrollFrame", "InTenebrisLootLogScroll", lootLogTab, "UIPanelScrollFrameTemplate")
+logScroll:SetPoint("TOPLEFT", lootLogTab, "TOPLEFT", 0, -28)
+logScroll:SetPoint("BOTTOMRIGHT", lootLogTab, "BOTTOMRIGHT", -26, 0)
+
+local LOOT_LOG_FRAME_WIDTH = 680
+local LOOT_LOG_SIDE_PANEL_WIDTH = 130
+local LOG_CONTENT_WIDTH = LOOT_LOG_FRAME_WIDTH - LOOT_LOG_SIDE_PANEL_WIDTH - 110
+
+local logScrollChild = CreateFrame("Frame", nil, logScroll)
+logScrollChild:SetWidth(LOG_CONTENT_WIDTH)
+logScrollChild:SetHeight(1)
+logScroll:SetScrollChild(logScrollChild)
+
+-- Font pool for log entries
+local logFontPool = {}
+local logFontPoolUsed = 0
+
+local function AcquireLogFontString()
+	logFontPoolUsed = logFontPoolUsed + 1
+	if not logFontPool[logFontPoolUsed] then
+		logFontPool[logFontPoolUsed] = logScrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	end
+	local fs = logFontPool[logFontPoolUsed]
+	fs:SetFontObject(GameFontNormalSmall)
+	fs:SetTextColor(1, 1, 1, 1)
+	fs:SetJustifyH("LEFT")
+	fs:SetWidth(LOG_CONTENT_WIDTH)
+	fs:Show()
+	return fs
+end
+
+local function ResetLogPool()
+	for i = 1, logFontPoolUsed do
+		logFontPool[i]:Hide()
+		logFontPool[i]:ClearAllPoints()
+	end
+	logFontPoolUsed = 0
+end
+
+-- Search state
+local logSearchText = ""
+
+-- Render the loot log list
+local function RenderLootLog()
+	ResetLogPool()
+
+	-- Hide all UI elements first
+	stateMessage:Hide()
+	writeErrorBanner:Hide()
+	logSearchBox:Hide()
+	logScroll:Hide()
+
+	-- State 1: No nampower
+	if not InTenebris.hasNampower then
+		stateMessage:SetText(
+			"|cff999999Loot Logs requires nampower, which can be\nenabled in the TurtleWoW launcher.|r"
+		)
+		stateMessage:Show()
+		return
+	end
+
+	-- State 2: Feature disabled
+	if not InTenebris.db.profile.lootLogEnabled then
+		stateMessage:SetText("|cff999999Loot logging is disabled.\nYou can enable it in the Options tab.|r")
+		stateMessage:Show()
+		return
+	end
+
+	-- State 3: Corruption error (show message, continue to empty log below)
+	if InTenebris.lootLogCorruptError then
+		stateMessage:SetText("|cffff3333Loot log file was corrupt and has been reset.\nAll previous data was lost.|r")
+		stateMessage:Show()
+		return
+	end
+
+	-- Show write error banner if applicable
+	if InTenebris.lootLogWriteError then
+		writeErrorBanner:SetText("Warning: Failed to save loot log to disk. Data may be lost on disconnect.")
+		writeErrorBanner:Show()
+	end
+
+	-- State 4: Empty log
+	local entries = InTenebris.lootLog or {}
+	if table.getn(entries) == 0 then
+		stateMessage:SetText(
+			"|cff999999Loot dropped in raids will be recorded here\nautomatically. Join a raid group to start logging.|r"
+		)
+		stateMessage:Show()
+		return
+	end
+
+	-- State 5: Has entries — show search + list
+	logSearchBox:Show()
+	logScroll:Show()
+
+	local searchLower = string.lower(logSearchText)
+	local hasSearch = searchLower ~= ""
+	local yOffset = 0
+
+	for i = 1, table.getn(entries) do
+		local e = entries[i]
+
+		-- Apply search filter
+		local matchesSearch = true
+		if hasSearch then
+			matchesSearch = string.find(string.lower(e.player), searchLower, 1, true)
+				or string.find(string.lower(e.itemName), searchLower, 1, true)
+				or string.find(string.lower(e.zone), searchLower, 1, true)
+		end
+
+		if matchesSearch then
+			-- Build the display line
+			local qualityColor = QUALITY_COLORS[e.itemQuality] or "ffffffff"
+			local classColor = InTenebris:GetClassColorCode(e.class) or "|cff999999"
+
+			local line = "|cff999999"
+				.. e.date
+				.. "|r"
+				.. "  |cffcccccc"
+				.. e.zone
+				.. "|r"
+				.. "  |c"
+				.. qualityColor
+				.. e.itemName
+				.. "|r"
+				.. "  "
+				.. classColor
+				.. e.player
+				.. "|r"
+
+			local fs = AcquireLogFontString()
+			fs:SetPoint("TOPLEFT", logScrollChild, "TOPLEFT", 0, -yOffset)
+			fs:SetText(line)
+			yOffset = yOffset + 14
+		end
+	end
+
+	if yOffset == 0 then
+		local noResults = AcquireLogFontString()
+		noResults:SetPoint("CENTER", logScrollChild, "TOP", 0, -60)
+		noResults:SetJustifyH("CENTER")
+		noResults:SetText("|cff666666No results found.|r")
+		yOffset = 120
+	end
+
+	logScrollChild:SetHeight(yOffset)
+	logScroll:SetVerticalScroll(0)
+end
+
+-- Wire up search
+logSearchBox:SetScript("OnTextChanged", function()
+	logSearchText = this:GetText()
+	if logSearchText == "" then
+		logSearchPlaceholder:Show()
+	else
+		logSearchPlaceholder:Hide()
+	end
+	RenderLootLog()
+end)
+
+-- Render on tab show
+local originalLogOnShow = lootLogTab:GetScript("OnShow")
+lootLogTab:SetScript("OnShow", function()
+	if originalLogOnShow then
+		originalLogOnShow()
+	end
+	RenderLootLog()
+end)
