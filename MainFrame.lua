@@ -1088,6 +1088,152 @@ end
 UIDropDownMenu_Initialize(hookItemRefDropdown, HookItemRefDropdown_Initialize)
 UIDropDownMenu_SetWidth(80, hookItemRefDropdown)
 
+-- ============================================================
+-- Options: Loot Logs section (only if nampower is available)
+-- ============================================================
+
+-- Forward declarations for loot log dropdowns
+local lootLogSectionHeader, lootLogSectionSep
+local enableLootLogLabel, enableLootLogDropdown
+local minQualityLabel, minQualityDropdown
+local maxEntriesLabel, maxEntriesDropdown
+local UpdateLootLogDropdownStates
+
+-- We defer creation until OnShow so InTenebris.hasNampower is set
+local lootLogOptionsCreated = false
+
+local function CreateLootLogOptions()
+	if lootLogOptionsCreated then
+		return
+	end
+	lootLogOptionsCreated = true
+
+	-- Section header
+	lootLogSectionHeader = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+	lootLogSectionHeader:SetPoint("TOPLEFT", hookItemRefLabel, "BOTTOMLEFT", 0, -24)
+	lootLogSectionHeader:SetText("Loot Logs")
+	lootLogSectionHeader:SetTextColor(1.0, 0.85, 0.30, 1)
+
+	lootLogSectionSep = optionsContent:CreateTexture(nil, "ARTWORK")
+	lootLogSectionSep:SetHeight(1)
+	lootLogSectionSep:SetPoint("TOPLEFT", lootLogSectionHeader, "BOTTOMLEFT", 0, -4)
+	lootLogSectionSep:SetPoint("RIGHT", optionsContent, "RIGHT", -4, 0)
+	lootLogSectionSep:SetTexture(0.6, 0.5, 0.15, 0.4)
+
+	-- Enable Loot Logs dropdown
+	enableLootLogLabel = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	enableLootLogLabel:SetPoint("TOPLEFT", lootLogSectionSep, "BOTTOMLEFT", 0, -12)
+	enableLootLogLabel:SetText("Enable loot logging:")
+
+	enableLootLogDropdown =
+		CreateFrame("Frame", "InTenebrisEnableLootLogDropdown", optionsContent, "UIDropDownMenuTemplate")
+	enableLootLogDropdown:SetPoint("LEFT", enableLootLogLabel, "RIGHT", -8, -2)
+
+	local ENABLE_OPTIONS = {
+		{ text = "Yes", value = true },
+		{ text = "No", value = false },
+	}
+
+	local function EnableLootLogDropdown_Initialize()
+		for _, option in ipairs(ENABLE_OPTIONS) do
+			local optionValue = option.value
+			local optionText = option.text
+			local info = {}
+			info.text = optionText
+			info.value = optionValue
+			info.func = function()
+				InTenebris.db.profile.lootLogEnabled = optionValue
+				UIDropDownMenu_SetSelectedValue(enableLootLogDropdown, optionValue)
+				UpdateLootLogDropdownStates()
+			end
+			info.checked = nil
+			UIDropDownMenu_AddButton(info)
+		end
+	end
+
+	UIDropDownMenu_Initialize(enableLootLogDropdown, EnableLootLogDropdown_Initialize)
+	UIDropDownMenu_SetWidth(80, enableLootLogDropdown)
+
+	-- Minimum quality dropdown
+	minQualityLabel = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	minQualityLabel:SetPoint("TOPLEFT", enableLootLogLabel, "BOTTOMLEFT", 0, -16)
+	minQualityLabel:SetText("Minimum item quality to log:")
+
+	minQualityDropdown = CreateFrame("Frame", "InTenebrisMinQualityDropdown", optionsContent, "UIDropDownMenuTemplate")
+	minQualityDropdown:SetPoint("LEFT", minQualityLabel, "RIGHT", -8, -2)
+
+	local QUALITY_OPTIONS = {
+		{ text = "|cff1eff00Uncommon|r", value = 2 },
+		{ text = "|cff0070ddRare|r", value = 3 },
+		{ text = "|cffa335eeEpic|r", value = 4 },
+		{ text = "|cffff8000Legendary|r", value = 5 },
+	}
+
+	local function MinQualityDropdown_Initialize()
+		for _, option in ipairs(QUALITY_OPTIONS) do
+			local optionValue = option.value
+			local optionText = option.text
+			local info = {}
+			info.text = optionText
+			info.value = optionValue
+			info.func = function()
+				InTenebris.db.profile.lootLogMinQuality = optionValue
+				UIDropDownMenu_SetSelectedValue(minQualityDropdown, optionValue)
+			end
+			info.checked = nil
+			UIDropDownMenu_AddButton(info)
+		end
+	end
+
+	UIDropDownMenu_Initialize(minQualityDropdown, MinQualityDropdown_Initialize)
+	UIDropDownMenu_SetWidth(120, minQualityDropdown)
+
+	-- Max entries dropdown
+	maxEntriesLabel = optionsContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	maxEntriesLabel:SetPoint("TOPLEFT", minQualityLabel, "BOTTOMLEFT", 0, -16)
+	maxEntriesLabel:SetText("Maximum log entries:")
+
+	maxEntriesDropdown = CreateFrame("Frame", "InTenebrisMaxEntriesDropdown", optionsContent, "UIDropDownMenuTemplate")
+	maxEntriesDropdown:SetPoint("LEFT", maxEntriesLabel, "RIGHT", -8, -2)
+
+	local MAX_ENTRIES_OPTIONS = {
+		{ text = "50", value = 50 },
+		{ text = "100", value = 100 },
+		{ text = "200", value = 200 },
+		{ text = "500", value = 500 },
+	}
+
+	local function MaxEntriesDropdown_Initialize()
+		for _, option in ipairs(MAX_ENTRIES_OPTIONS) do
+			local optionValue = option.value
+			local optionText = option.text
+			local info = {}
+			info.text = optionText
+			info.value = optionValue
+			info.func = function()
+				InTenebris.db.profile.lootLogMaxEntries = optionValue
+				UIDropDownMenu_SetSelectedValue(maxEntriesDropdown, optionValue)
+				-- If lowered, trim and save immediately
+				if InTenebris.lootLog and table.getn(InTenebris.lootLog) > optionValue then
+					InTenebris:SaveLootLog()
+				end
+			end
+			info.checked = nil
+			UIDropDownMenu_AddButton(info)
+		end
+	end
+
+	UIDropDownMenu_Initialize(maxEntriesDropdown, MaxEntriesDropdown_Initialize)
+	UIDropDownMenu_SetWidth(80, maxEntriesDropdown)
+
+	-- Enable/disable dependent dropdowns
+	UpdateLootLogDropdownStates = function()
+		local enabled = InTenebris.db.profile.lootLogEnabled
+		SetDropdownEnabled(minQualityDropdown, enabled)
+		SetDropdownEnabled(maxEntriesDropdown, enabled)
+	end
+end
+
 -- Set initial values from saved profile on show
 local originalOnShow = optionsTab:GetScript("OnShow")
 optionsTab:SetScript("OnShow", function()
@@ -1115,6 +1261,39 @@ optionsTab:SetScript("OnShow", function()
 		end
 	end
 
+	-- Create and sync loot log options (if nampower available)
+	if InTenebris.hasNampower then
+		CreateLootLogOptions()
+
+		-- Sync enable dropdown
+		local enabledValue = InTenebris.db.profile.lootLogEnabled
+		UIDropDownMenu_SetSelectedValue(enableLootLogDropdown, enabledValue)
+		if enabledValue then
+			UIDropDownMenu_SetText("Yes", enableLootLogDropdown)
+		else
+			UIDropDownMenu_SetText("No", enableLootLogDropdown)
+		end
+
+		-- Sync quality dropdown
+		local qualityValue = InTenebris.db.profile.lootLogMinQuality
+		UIDropDownMenu_SetSelectedValue(minQualityDropdown, qualityValue)
+		local QUALITY_DISPLAY = {
+			[2] = "|cff1eff00Uncommon|r",
+			[3] = "|cff0070ddRare|r",
+			[4] = "|cffa335eeEpic|r",
+			[5] = "|cffff8000Legendary|r",
+		}
+		UIDropDownMenu_SetText(QUALITY_DISPLAY[qualityValue] or "Epic", minQualityDropdown)
+
+		-- Sync max entries dropdown
+		local maxValue = InTenebris.db.profile.lootLogMaxEntries
+		UIDropDownMenu_SetSelectedValue(maxEntriesDropdown, maxValue)
+		UIDropDownMenu_SetText(tostring(maxValue), maxEntriesDropdown)
+
+		-- Update dependent states
+		UpdateLootLogDropdownStates()
+	end
+
 	-- Update scroll child height to fit content (expand as more options are added)
-	optionsContent:SetHeight(130)
+	optionsContent:SetHeight(280)
 end)
