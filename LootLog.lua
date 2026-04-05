@@ -21,16 +21,34 @@ local function SerializeLootLog(entries)
 	local parts = { "InTenebris.lootLog = {\n" }
 	for i = 1, table.getn(entries) do
 		local e = entries[i]
-		table.insert(parts, "    { ")
-		table.insert(parts, "timestamp = " .. e.timestamp .. ", ")
-		table.insert(parts, 'date = "' .. EscapeString(e.date) .. '", ')
-		table.insert(parts, 'zone = "' .. EscapeString(e.zone) .. '", ')
-		table.insert(parts, 'player = "' .. EscapeString(e.player) .. '", ')
-		table.insert(parts, 'class = "' .. EscapeString(e.class) .. '", ')
-		table.insert(parts, "itemId = " .. e.itemId .. ", ")
-		table.insert(parts, 'itemName = "' .. EscapeString(e.itemName) .. '", ')
-		table.insert(parts, "itemQuality = " .. e.itemQuality)
-		table.insert(parts, " },\n")
+		table.insert(
+			parts,
+			"    { "
+				.. "timestamp = "
+				.. e.timestamp
+				.. ", "
+				.. 'date = "'
+				.. EscapeString(e.date)
+				.. '", '
+				.. 'zone = "'
+				.. EscapeString(e.zone)
+				.. '", '
+				.. 'player = "'
+				.. EscapeString(e.player)
+				.. '", '
+				.. 'class = "'
+				.. EscapeString(e.class)
+				.. '", '
+				.. "itemId = "
+				.. e.itemId
+				.. ", "
+				.. 'itemName = "'
+				.. EscapeString(e.itemName)
+				.. '", '
+				.. "itemQuality = "
+				.. e.itemQuality
+				.. " },\n"
+		)
 	end
 	table.insert(parts, "}\n")
 	return table.concat(parts)
@@ -160,8 +178,7 @@ function InTenebris:OnLootMessage()
 
 	-- Get player class from raid roster cache
 	local playerLower = string.lower(player)
-	local classInfo = self:GetPlayerClass(playerLower)
-	local class = classInfo or "Unknown"
+	local class = self:GetPlayerClass(playerLower) or "Unknown"
 
 	-- Build the log entry
 	local entry = {
@@ -355,7 +372,7 @@ local function RenderLootLog()
 		if matchesSearch then
 			-- Build the display line
 			local qualityColor = QUALITY_COLORS[e.itemQuality] or "ffffffff"
-			local classColor = InTenebris:GetClassColorCode(e.class) or "|cff999999"
+			local classColor = InTenebris:GetClassColorCode(e.class)
 
 			local line = "|cff999999"
 				.. e.date
