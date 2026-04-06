@@ -47,6 +47,9 @@ local function SerializeLootLog(entries)
 				.. '", '
 				.. "itemQuality = "
 				.. e.itemQuality
+				.. ", "
+				.. "itemQuantity = "
+				.. e.itemQuantity
 				.. " },\n"
 		)
 	end
@@ -158,12 +161,15 @@ function InTenebris:OnLootMessage()
 		return
 	end
 
-	-- Extract item ID from the link
+	-- Extract item ID and optional quantity from the link
+	-- Quantity suffix appears after the color terminator: "|rx2"
 	local _, _, itemIdStr = string.find(itemLink, "item:(%d+)")
 	if not itemIdStr then
 		return
 	end
 	local itemId = tonumber(itemIdStr)
+	local _, _, qtyStr = string.find(itemLink, "|rx(%d+)")
+	local itemQuantity = qtyStr and tonumber(qtyStr) or 1
 
 	-- Check item quality against threshold
 	local quality, itemName
@@ -197,6 +203,7 @@ function InTenebris:OnLootMessage()
 		itemId = itemId,
 		itemName = itemName,
 		itemQuality = quality,
+		itemQuantity = itemQuantity,
 	}
 
 	-- Prepend (newest first)
@@ -381,17 +388,23 @@ local function RenderLootLog()
 			local qualityColor = QUALITY_COLORS[e.itemQuality] or "ffffffff"
 			local classColor = InTenebris:GetClassColorCode(e.class)
 
+			local quantityText = ""
+			if e.itemQuantity > 1 then
+				quantityText = " x" .. e.itemQuantity
+			end
+
 			local line = "|cff999999"
 				.. e.date
 				.. "|r"
 				.. "  |cffcccccc"
 				.. e.zone
 				.. "|r"
-				.. "  |c"
+				.. " - |c"
 				.. qualityColor
 				.. e.itemName
 				.. "|r"
-				.. "  "
+				.. quantityText
+				.. " - "
 				.. classColor
 				.. e.player
 				.. "|r"
