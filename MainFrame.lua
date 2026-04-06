@@ -1129,8 +1129,8 @@ local function CreateLootLogOptions()
 	enableLootLogDropdown:SetPoint("LEFT", enableLootLogLabel, "RIGHT", -8, -2)
 
 	local ENABLE_OPTIONS = {
-		{ text = "Yes", value = true },
-		{ text = "No", value = false },
+		{ text = "Yes", value = "yes" },
+		{ text = "No", value = "no" },
 	}
 
 	local function EnableLootLogDropdown_Initialize()
@@ -1220,7 +1220,7 @@ local function CreateLootLogOptions()
 
 	-- Enable/disable dependent dropdowns
 	UpdateLootLogDropdownStates = function()
-		local enabled = InTenebris.db.profile.lootLogEnabled
+		local enabled = InTenebris.db.profile.lootLogEnabled == "yes"
 		SetDropdownEnabled(minQualityDropdown, enabled)
 		SetDropdownEnabled(maxEntriesDropdown, enabled)
 	end
@@ -1260,11 +1260,7 @@ optionsTab:SetScript("OnShow", function()
 		-- Sync enable dropdown
 		local enabledValue = InTenebris.db.profile.lootLogEnabled
 		UIDropDownMenu_SetSelectedValue(enableLootLogDropdown, enabledValue)
-		if enabledValue then
-			UIDropDownMenu_SetText("Yes", enableLootLogDropdown)
-		else
-			UIDropDownMenu_SetText("No", enableLootLogDropdown)
-		end
+		UIDropDownMenu_SetText(enabledValue == "yes" and "Yes" or "No", enableLootLogDropdown)
 
 		-- Sync quality dropdown
 		local qualityValue = InTenebris.db.profile.lootLogMinQuality

@@ -9,7 +9,7 @@ InTenebris:RegisterDefaults("profile", {
 	showAttributions = "group", -- "group" = when in party/raid, "always" = always
 	showOutOfGroup = "no", -- "yes" = show players not in your group, "no" = only group members
 	hookItemRefTooltip = "yes", -- "yes" = show data on item links in chat, "no" = don't
-	lootLogEnabled = true, -- global toggle for loot logging
+	lootLogEnabled = "yes", -- "yes" = enable loot logging, "no" = disable
 	lootLogMinQuality = 4, -- minimum item quality to log (4 = Epic)
 	lootLogMaxEntries = 200, -- maximum log entries to keep
 })

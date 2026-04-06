@@ -113,7 +113,7 @@ end
 
 function InTenebris:OnLootMessage()
 	-- Early return if feature disabled or not in a raid
-	if not self.db.profile.lootLogEnabled then
+	if self.db.profile.lootLogEnabled ~= "yes" then
 		return
 	end
 	if GetNumRaidMembers() == 0 then
@@ -127,20 +127,27 @@ function InTenebris:OnLootMessage()
 	end
 
 	-- Parse player name and item link from the loot message
-	-- Pattern: "PlayerName receives loot: |c...|Hitem:ID:...|h[Name]|h|r."
-	-- Also handles "You receive loot: ..." for the local player
+	-- Formats:
+	--   "PlayerName receives loot: [item]" / "You receive loot: [item]"  (master loot / direct)
+	--   "PlayerName won: [item]" / "You won: [item]"                    (group loot roll)
 	local player, itemLink = nil, nil
 
-	-- Try "PlayerName receives loot: [item]"
+	-- Try "PlayerName receives loot: [item]" or "PlayerName won: [item]"
 	local _, _, pName, link = string.find(msg, "^(.+) receives loot: (.+)")
+	if not pName then
+		_, _, pName, link = string.find(msg, "^(.+) won: (.+)")
+	end
 	if pName and link then
 		player = pName
 		itemLink = link
 	end
 
-	-- Try "You receive loot: [item]" (local player)
+	-- Try "You receive loot: [item]" or "You won: [item]" (local player)
 	if not player then
 		local _, _, link2 = string.find(msg, "^You receive loot: (.+)")
+		if not link2 then
+			_, _, link2 = string.find(msg, "^You won: (.+)")
+		end
 		if link2 then
 			player = UnitName("player")
 			itemLink = link2
@@ -321,7 +328,7 @@ local function RenderLootLog()
 	end
 
 	-- State 2: Feature disabled
-	if not InTenebris.db.profile.lootLogEnabled then
+	if InTenebris.db.profile.lootLogEnabled ~= "yes" then
 		stateMessage:SetText("|cff999999Loot logging is disabled.\nYou can enable it in the Options tab.|r")
 		stateMessage:Show()
 		return
