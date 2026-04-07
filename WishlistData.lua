@@ -16,7 +16,7 @@
 
 -- WISHLIST_DATA_START
 InTenebris.wishlistData = {
-	generatedDate = "2026-04-06",
+	generatedDate = "2026-04-07",
 	wishlist = {
 		["MWC"] = { 17204, 17104 },
 		["CYNDA"] = { 18820, 18842, 16900 },
