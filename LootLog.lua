@@ -70,12 +70,17 @@ function InTenebris:LoadLootLog()
 	self.lootLogWriteError = false
 	self.lootLogCorruptError = false
 
-	local ok, err = pcall(ExecuteCustomLuaFile, LOOT_LOG_FILENAME)
+	-- ReadCustomFile + RunScript instead of ExecuteCustomLuaFile, which sandboxes
+	-- globals and prevents the assignment to InTenebris.lootLog from persisting.
+	if not CustomFileExists(LOOT_LOG_FILENAME) then
+		return
+	end
+	local content = ReadCustomFile(LOOT_LOG_FILENAME)
+	local ok, err = true, nil
+	if content and content ~= "" then
+		ok, err = pcall(RunScript, content)
+	end
 	if not ok then
-		-- File doesn't exist or is corrupt
-		if not CustomFileExists(LOOT_LOG_FILENAME) then
-			return
-		end
 		PrintError("Loot log file was corrupt and has been reset. Data was lost.")
 		self.lootLogCorruptError = true
 		self.lootLog = {}
