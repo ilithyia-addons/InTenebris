@@ -324,34 +324,32 @@ local logSearchText = ""
 local function RenderLootLog()
 	ResetLogPool()
 
-	-- Hide all UI elements first
 	stateMessage:Hide()
 	writeErrorBanner:Hide()
-	logSearchBox:Hide()
-	logScroll:Hide()
 
-	-- State 1: No nampower
+	-- Determine which state we're in
+	local showState = nil
 	if not InTenebris.hasNampower then
-		stateMessage:SetText(
-			"|cff999999Loot Logs requires nampower, which can be\nenabled in the TurtleWoW launcher.|r"
-		)
+		showState = "|cff999999Loot Logs requires nampower, which can be\nenabled in the TurtleWoW launcher.|r"
+	elseif InTenebris.db.profile.lootLogEnabled ~= "yes" then
+		showState = "|cff999999Loot logging is disabled.\nYou can enable it in the Options tab.|r"
+	elseif InTenebris.lootLogCorruptError then
+		showState = "|cffff3333Loot log file was corrupt and has been reset.\nAll previous data was lost.|r"
+	elseif table.getn(InTenebris.lootLog or {}) == 0 then
+		showState =
+			"|cff999999Loot dropped in raids will be recorded here\nautomatically. Join a raid group to start logging.|r"
+	end
+
+	if showState then
+		ResetLogPool()
+		logSearchBox:Hide()
+		logScroll:Hide()
+		stateMessage:SetText(showState)
 		stateMessage:Show()
 		return
 	end
 
-	-- State 2: Feature disabled
-	if InTenebris.db.profile.lootLogEnabled ~= "yes" then
-		stateMessage:SetText("|cff999999Loot logging is disabled.\nYou can enable it in the Options tab.|r")
-		stateMessage:Show()
-		return
-	end
-
-	-- State 3: Corruption error
-	if InTenebris.lootLogCorruptError then
-		stateMessage:SetText("|cffff3333Loot log file was corrupt and has been reset.\nAll previous data was lost.|r")
-		stateMessage:Show()
-		return
-	end
+	ResetLogPool()
 
 	-- Show write error banner if applicable
 	if InTenebris.lootLogWriteError then
@@ -359,20 +357,11 @@ local function RenderLootLog()
 		writeErrorBanner:Show()
 	end
 
-	-- State 4: Empty log
-	local entries = InTenebris.lootLog or {}
-	if table.getn(entries) == 0 then
-		stateMessage:SetText(
-			"|cff999999Loot dropped in raids will be recorded here\nautomatically. Join a raid group to start logging.|r"
-		)
-		stateMessage:Show()
-		return
-	end
-
-	-- State 5: Has entries — show search + list
+	-- Has entries — show search + list
 	logSearchBox:Show()
 	logScroll:Show()
 
+	local entries = InTenebris.lootLog
 	local searchLower = string.lower(logSearchText)
 	local hasSearch = searchLower ~= ""
 	local yOffset = 0
