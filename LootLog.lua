@@ -430,6 +430,7 @@ local function RenderLootLog()
 	end
 
 	logScrollChild:SetHeight(yOffset)
+	logScroll:UpdateScrollChildRect()
 	logScroll:SetVerticalScroll(0)
 end
 

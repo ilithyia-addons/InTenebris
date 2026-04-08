@@ -687,6 +687,7 @@ RenderLootAttributions = function()
 	end
 
 	lootScrollChild:SetHeight(yOffset)
+	lootScroll:UpdateScrollChildRect()
 	lootScroll:SetVerticalScroll(0)
 
 	UpdateViewToggleAppearance()
@@ -868,6 +869,7 @@ local function SelectRaid(raidId)
 			data.frame:Hide()
 		end
 	end
+	strategiesScroll:UpdateScrollChildRect()
 	strategiesScroll:SetVerticalScroll(0)
 end
 
