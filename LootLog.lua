@@ -65,6 +65,18 @@ local function PrintError(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cffff3333[InTenebris] " .. msg .. "|r")
 end
 
+-- Back up corrupt file content and reset the main file
+local function BackupAndReset(content)
+	local backupName = "InTenebris_LootLog_corrupt_" .. date("%Y%m%d_%H%M%S") .. ".lua"
+	local backupOk = pcall(WriteCustomFile, backupName, content, "w")
+	pcall(WriteCustomFile, LOOT_LOG_FILENAME, "InTenebris.lootLog = {}\n", "w")
+	if backupOk then
+		PrintError("Loot log was corrupt. Backup saved to CustomData/" .. backupName)
+	else
+		PrintError("Loot log was corrupt. Failed to save backup — data may be lost.")
+	end
+end
+
 function InTenebris:LoadLootLog()
 	self.lootLog = {}
 	self.lootLogWriteError = false
@@ -81,20 +93,21 @@ function InTenebris:LoadLootLog()
 		ok, err = pcall(RunScript, content)
 	end
 	if not ok then
-		PrintError("Loot log file was corrupt and has been reset. Data was lost.")
 		self.lootLogCorruptError = true
 		self.lootLog = {}
-		-- Wipe the corrupt file
-		local wipeOk, wipeErr = pcall(WriteCustomFile, LOOT_LOG_FILENAME, "InTenebris.lootLog = {}\n", "w")
-		if not wipeOk then
-			PrintError("Failed to reset loot log file: " .. tostring(wipeErr))
-		end
+		BackupAndReset(content)
 		return
 	end
 
 	-- Validate that lootLog is a table after loading
 	if type(self.lootLog) ~= "table" then
 		self.lootLog = {}
+	end
+
+	-- If file has content but nothing loaded, treat as corrupt
+	if table.getn(self.lootLog) == 0 and string.len(content) > 30 then
+		self.lootLogCorruptError = true
+		BackupAndReset(content)
 	end
 end
 
@@ -333,11 +346,14 @@ local function RenderLootLog()
 		showState = "|cff999999Loot Logs requires nampower, which can be\nenabled in the TurtleWoW launcher.|r"
 	elseif InTenebris.db.profile.lootLogEnabled ~= "yes" then
 		showState = "|cff999999Loot logging is disabled.\nYou can enable it in the Options tab.|r"
-	elseif InTenebris.lootLogCorruptError then
-		showState = "|cffff3333Loot log file was corrupt and has been reset.\nAll previous data was lost.|r"
 	elseif table.getn(InTenebris.lootLog or {}) == 0 then
-		showState =
-			"|cff999999Loot dropped in raids will be recorded here\nautomatically. Join a raid group to start logging.|r"
+		if InTenebris.lootLogCorruptError then
+			showState =
+				"|cffff3333Loot log was corrupt. A backup was saved to CustomData/.\nThe log has been reset and will continue recording new loot.|r"
+		else
+			showState =
+				"|cff999999Loot dropped in raids will be recorded here\nautomatically. Join a raid group to start logging.|r"
+		end
 	end
 
 	if showState then
