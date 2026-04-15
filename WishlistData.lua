@@ -16,7 +16,7 @@
 
 -- WISHLIST_DATA_START
 InTenebris.wishlistData = {
-	generatedDate = "2026-04-14",
+	generatedDate = "2026-04-15",
 	wishlist = {
 		["MWC"] = { 17204, 17104 },
 		["CYNDA"] = { 18820, 18842, 16900 },
@@ -481,8 +481,8 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "RAND" },
 		},
 		[19379] = {
-			{ rank = 1, player = "SOUFFRANCE" },
-			{ rank = 2, player = "LEHOOF" },
+			{ rank = 1, player = "LEHOOF" },
+			{ rank = 2, player = "SOUFFRANCE" },
 		},
 		[19380] = {
 			{ rank = 1, player = "SHREK" },
