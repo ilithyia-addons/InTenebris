@@ -168,9 +168,9 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "KALEN" },
 		},
 		[16965] = {
-			{ rank = 1, player = "HODVIDAR" },
-			{ rank = 2, player = "DARNOM" },
-			{ rank = 3, player = "MWC" },
+			{ rank = 1, player = "DARNOM" },
+			{ rank = 2, player = "MWC" },
+			{ rank = 3, player = "JENAIMARREXP" },
 		},
 		[19350] = {
 			{ rank = 1, player = "RAND" },
@@ -603,7 +603,7 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "WORLDE" },
 		},
 		[33073] = {
-			{ rank = 1, player = "ILLYTHIA" },
+			{ rank = 1, player = "RAND" },
 		},
 		[33074] = {
 			{ rank = 1, player = "RAND" },
@@ -625,7 +625,7 @@ InTenebris.wishlistData = {
 			{ rank = 1, player = "RAND" },
 		},
 		[33079] = {
-			{ rank = 1, player = "HEYLARI" },
+			{ rank = 1, player = "RAND" },
 		},
 		[33089] = {
 			{ rank = 1, player = "RAND" },
